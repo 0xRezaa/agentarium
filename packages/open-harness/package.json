@@ -1,5 +1,5 @@
 {
-  "name": "openharness",
+  "name": "@0xrezaa/openharness",
   "version": "0.0.0",
   "private": false,
   "description": "Placeholder package for OpenHarness, a browser-native inspectable AI agent harness.",
@@ -8,5 +8,8 @@
   "type": "module",
   "files": [
     "README.md"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
