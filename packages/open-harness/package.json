@@ -1,7 +1,12 @@
 {
-  "name": "@agentarium/open-harness",
-  "version": "0.1.0",
+  "name": "openharness",
+  "version": "0.0.0",
   "private": false,
+  "description": "Placeholder package for OpenHarness, a browser-native inspectable AI agent harness.",
   "license": "MIT",
-  "type": "module"
+  "author": "Reza Banazadeh",
+  "type": "module",
+  "files": [
+    "README.md"
+  ]
 }
