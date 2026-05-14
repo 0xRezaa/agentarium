@@ -1,0 +1,14 @@
+{
+  "name": "agentarium",
+  "description": "Browser-native demos for inspectable AI agent systems.",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "dev": "npm run dev -w @agentarium/open-harness",
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  }
+}
