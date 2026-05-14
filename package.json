@@ -9,6 +9,12 @@
   "scripts": {
     "dev": "npm run dev -w @agentarium/open-harness",
     "build": "npm run build --workspaces",
-    "test": "npm run test --workspaces"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "clean": "rimraf packages/*/dist"
   }
 }
