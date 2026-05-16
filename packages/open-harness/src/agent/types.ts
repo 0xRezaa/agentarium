@@ -1,3 +1,6 @@
+import { Tool } from "#open-harness/tool/types";
+import { ModelAdapter } from "#open-harness/model/types";
+
 /**
  * Agent loop phases
  *
@@ -16,4 +19,12 @@ type AgentPhase = "agent" | "model" | "tool";
  */
 type AgentLifecycleMoment = "start" | "complete" | "error";
 
-type AgentLifecyclePoint = `${AgentPhase}:${AgentLifecycleMoment}`;
+export type AgentLifecyclePoint = `${AgentPhase}:${AgentLifecycleMoment}`;
+
+export interface Agent {
+  id: string;
+  name?: string;
+  instructions: string;
+  model: ModelAdapter;
+  tools?: Tool[];
+}
