@@ -1,6 +1,12 @@
 {
   "extends": "@tsconfig/strictest/tsconfig.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "#open-harness/*": ["./packages/open-harness/src/*"],
+      "#open-harness": ["./packages/open-harness/src"],
+      "#core/*": ["./packages/core/src/*"],
+      "#core": ["./packages/core/src"]
+    }
   }
 }
