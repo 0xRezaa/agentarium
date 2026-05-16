@@ -1,3 +1,5 @@
+import { ToolCallId } from "#open-harness/tool/types";
+
 export interface TextPart {
   type: "text";
   text: string;
@@ -6,7 +8,7 @@ export interface TextPart {
 export interface ToolPartBase<T extends string> {
   type: T;
   toolName: string;
-  toolCallId: string;
+  toolCallId: ToolCallId;
 }
 
 export interface ToolCallPart extends ToolPartBase<"tool-call"> {
