@@ -3,8 +3,8 @@
   "compilerOptions": {
     "noEmit": true,
     "paths": {
-      "#open-harness/*": ["./packages/open-harness/src/*"],
-      "#open-harness": ["./packages/open-harness/src"],
+      "#openharness/*": ["./packages/openharness/src/*"],
+      "#openharness": ["./packages/openharness/src"],
       "#core/*": ["./packages/core/src/*"],
       "#core": ["./packages/core/src"]
     }

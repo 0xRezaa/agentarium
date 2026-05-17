@@ -9,7 +9,7 @@ Browser-native demos for inspectable AI agent systems.
 ```txt
 packages/
   core/          # Headless agent runtime primitives
-  open-harness/  # Browser UI for inspecting agent execution
+  openharness/  # Browser UI for inspecting agent execution
 ```
 
 ## OpenHarness
