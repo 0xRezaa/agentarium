@@ -1,5 +1,5 @@
 import { Branded } from "#core/types";
-import { Agent } from "../agent/types";
+import { Agent } from "#openharness/agent/types";
 
 type AgentRunId = Branded<string, "AgentRunId">;
 

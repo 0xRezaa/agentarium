@@ -1,5 +1,5 @@
-import { Tool } from "../tool/types";
-import { ModelAdapter } from "../model/types";
+import { Tool } from "#openharness/tool/types";
+import { ModelAdapter } from "#openharness/model/types";
 
 /**
  * Agent loop phases

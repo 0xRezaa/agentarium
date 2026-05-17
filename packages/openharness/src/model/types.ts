@@ -1,4 +1,4 @@
-import { ToolCallId } from "../tool/types";
+import { ToolCallId } from "#openharness/tool/types";
 
 export interface TextPart {
   type: "text";
