@@ -3,6 +3,10 @@ import { Agent } from "#core/agent/types";
 
 type AgentRunId = Branded<string, "AgentRunId">;
 
+export function createAgentRunId(): AgentRunId {
+  return crypto.randomUUID() as AgentRunId;
+}
+
 interface AgentInput {
   value: string;
 }
