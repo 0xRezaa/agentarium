@@ -7,12 +7,9 @@ export function createAgentRunId(): AgentRunId {
   return crypto.randomUUID() as AgentRunId;
 }
 
-interface AgentInput {
-  value: string;
-}
 // TODO: extend with FS and other context
 export interface AgentContext {
-  input: AgentInput;
+  input: string;
 }
 
 export interface AgentRunResult {
@@ -31,7 +28,7 @@ export interface HarnessRunOptions {
 export interface Harness {
   run(
     agent: Agent,
-    input: AgentInput,
+    context: AgentContext,
     options?: HarnessRunOptions,
   ): Promise<AgentRunResult>;
 }
