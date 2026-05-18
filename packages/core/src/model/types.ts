@@ -1,4 +1,4 @@
-import { ModelMessage } from "./messages/types";
+import type { ModelMessage } from "./messages/types";
 
 export interface ModelRequest {
   messages: ModelMessage[];

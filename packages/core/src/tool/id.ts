@@ -1,4 +1,4 @@
-import { Branded } from "#core/types";
+import type { Branded } from "#core/types";
 
 export type ToolCallId = Branded<string, "ToolCallId">;
 

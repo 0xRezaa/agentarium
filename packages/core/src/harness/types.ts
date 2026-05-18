@@ -1,6 +1,6 @@
-import { Agent } from "#core/agent/types";
-import { TraceSink } from "#core/trace/types";
-import { AgentRunId } from "./id";
+import type { Agent } from "#core/agent/types";
+import type { TraceSink } from "#core/trace/types";
+import type { AgentRunId } from "./id";
 
 // TODO: extend with FS and other context
 export interface AgentContext {

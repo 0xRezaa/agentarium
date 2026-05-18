@@ -1,4 +1,4 @@
-import { Branded } from "#core/types";
+import type { Branded } from "#core/types";
 
 export type AgentId = Branded<string, "AgentId">;
 
