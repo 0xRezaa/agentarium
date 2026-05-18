@@ -1,10 +1,10 @@
 import { ModelMessage } from "./messages/types";
 
-interface ModelRequest {
+export interface ModelRequest {
   messages: ModelMessage[];
 }
 
-interface ModelResult {
+export interface ModelResult {
   message: ModelMessage;
 }
 
