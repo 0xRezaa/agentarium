@@ -2,9 +2,10 @@ import type { Agent } from "#core/agent/types";
 import type { TraceSink } from "#core/trace/types";
 import type { AgentRunId } from "./id";
 
-// TODO: extend with FS and other context
-export interface AgentContext {
+export interface AgentRunInput<TContext = unknown> {
   input: string;
+  // TODO: extend with FS and other context
+  context?: TContext;
 }
 
 export interface AgentRunResult {
@@ -24,7 +25,7 @@ export interface HarnessRunOptions {
 export interface Harness {
   run(
     agent: Agent,
-    context: AgentContext,
+    input: AgentRunInput,
     options?: HarnessRunOptions,
   ): Promise<AgentRunResult>;
 }
