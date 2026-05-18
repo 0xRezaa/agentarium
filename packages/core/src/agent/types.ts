@@ -1,5 +1,6 @@
 import { Tool } from "#core/tool/types";
 import { ModelAdapter } from "#core/model/types";
+import { AgentId } from "./id";
 
 /**
  * Agent loop phases
@@ -22,7 +23,7 @@ type AgentLifecycleMoment = "start" | "complete" | "error";
 export type AgentLifecyclePoint = `${AgentPhase}:${AgentLifecycleMoment}`;
 
 export interface Agent {
-  id: string;
+  id: AgentId;
   name?: string;
   instructions: string;
   model: ModelAdapter;

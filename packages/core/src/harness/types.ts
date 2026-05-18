@@ -1,11 +1,5 @@
-import { Branded } from "#core/types";
 import { Agent } from "#core/agent/types";
-
-type AgentRunId = Branded<string, "AgentRunId">;
-
-export function createAgentRunId(): AgentRunId {
-  return crypto.randomUUID() as AgentRunId;
-}
+import { AgentRunId } from "./id";
 
 // TODO: extend with FS and other context
 export interface AgentContext {

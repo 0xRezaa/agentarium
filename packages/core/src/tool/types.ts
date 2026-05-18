@@ -1,15 +1,11 @@
-import { Branded } from "#core/types";
-
-export type ToolCallId = Branded<string, "ToolCallId">;
-
-export function createToolCallId(): ToolCallId {
-  return crypto.randomUUID() as ToolCallId;
-}
+import { AgentId } from "#core/agent/id";
+import { AgentRunId } from "#core/harness/id";
+import { ToolCallId } from "./id";
 
 export interface ToolExecutionContext {
   toolCallId: ToolCallId;
-  agentId: string;
-  runId: string;
+  agentId: AgentId;
+  runId: AgentRunId;
   signal?: AbortSignal;
 }
 

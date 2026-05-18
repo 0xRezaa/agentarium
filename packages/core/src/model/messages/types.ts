@@ -1,4 +1,4 @@
-import { ToolCallId } from "#core/tool/types";
+import { ToolCallId } from "#core/tool/id";
 
 export interface TextPart {
   type: "text";
