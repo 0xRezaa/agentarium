@@ -12,3 +12,7 @@ export interface TraceEvent<T = unknown> {
   timestamp: number;
   payload?: T;
 }
+
+export interface TraceSink {
+  emit(event: TraceEvent): void | Promise<void>;
+}
