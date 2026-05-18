@@ -14,3 +14,5 @@ export interface Tool<Input = unknown, Result = unknown> {
   description: string;
   execute(input: Input, context: ToolExecutionContext): Promise<Result>;
 }
+
+export type ToolSet<TName extends string = string> = Record<TName, Tool>;
