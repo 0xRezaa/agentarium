@@ -1,4 +1,5 @@
 import { Agent } from "#core/agent/types";
+import { TraceSink } from "#core/trace/types";
 import { AgentRunId } from "./id";
 
 // TODO: extend with FS and other context
@@ -13,9 +14,10 @@ export interface AgentRunResult {
   error?: unknown;
 }
 
-// TODO: pass trace sink, tools, middleware. Later offload to config as well
+// TODO: pass tools, middleware. Later offload to config as well
 export interface HarnessRunOptions {
   maxIterations?: number;
+  traceSink?: TraceSink;
   signal?: AbortSignal;
 }
 
