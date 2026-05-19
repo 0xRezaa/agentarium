@@ -1,17 +1,10 @@
 import type { ModelUsage } from "#core/model/usage/types";
-import type { ModelToolCall } from "#core/model/tool-call/types";
-
-/** A complete tool-call request emitted by the model. */
-export interface ModelToolCallEvent {
-  type: "model:tool-call";
-  toolCall: ModelToolCall;
-}
+import type { AssistantParts } from "../messages/types";
 
 /** Final output of one model invocation. */
 export interface ModelResponseEvent {
   type: "model:response";
-  text?: string;
-  toolCalls?: ModelToolCall[];
+  parts: AssistantParts;
 }
 
 /** Token/accounting metadata reported or estimated for one model invocation. */
@@ -20,7 +13,4 @@ export interface ModelUsageEvent {
   usage: ModelUsage;
 }
 
-export type ModelFinalEvent =
-  | ModelToolCallEvent
-  | ModelResponseEvent
-  | ModelUsageEvent;
+export type ModelFinalEvent = ModelResponseEvent | ModelUsageEvent;
