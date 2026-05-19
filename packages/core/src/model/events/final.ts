@@ -1,13 +1,13 @@
 import type { ModelUsage } from "#core/model/usage/types";
 import type { ModelToolCall } from "#core/model/tool-call/types";
 
-/** A complete normalized tool-call request emitted by the model. */
+/** A complete tool-call request emitted by the model. */
 export interface ModelToolCallEvent {
   type: "model:tool-call";
   toolCall: ModelToolCall;
 }
 
-/** Final normalized output of one model invocation. */
+/** Final output of one model invocation. */
 export interface ModelResponseEvent {
   type: "model:response";
   text?: string;
@@ -20,8 +20,7 @@ export interface ModelUsageEvent {
   usage: ModelUsage;
 }
 
-/** Final non-delta events emitted by a model adapter. */
 export type ModelFinalEvent =
-  | ModelResponseEvent
   | ModelToolCallEvent
+  | ModelResponseEvent
   | ModelUsageEvent;
