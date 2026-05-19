@@ -23,22 +23,24 @@ export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 
 export type MessagePart = TextPart | ToolCallPart | ToolResultPart;
 
-interface SystemModelMessage {
+export interface SystemModelMessage {
   role: "system";
   parts: TextPart[];
 }
 
-interface UserModelMessage {
+export interface UserModelMessage {
   role: "user";
   parts: TextPart[];
 }
 
-interface AssistantModelMessage {
+export type AssistantParts = Array<TextPart | ToolCallPart>;
+
+export interface AssistantModelMessage {
   role: "assistant";
-  parts: Array<TextPart | ToolCallPart>;
+  parts: AssistantParts;
 }
 
-interface ToolModelMessage {
+export interface ToolModelMessage {
   role: "tool";
   parts: [ToolResultPart];
 }
