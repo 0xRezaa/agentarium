@@ -11,11 +11,11 @@ const mockModelStreamEvents: ModelStreamEvent[] = [
   },
 ];
 
-export class FakeModelAdapter implements ModelAdapter {
+export class MockModelAdapter implements ModelAdapter {
   constructor(
     private readonly events: ModelStreamEvent[] = mockModelStreamEvents,
   ) {}
-  id: string = "fake-model-adapter";
+  id: string = "mock-model-adapter";
   async *stream(): AsyncIterable<ModelStreamEvent> {
     yield* this.events;
   }
