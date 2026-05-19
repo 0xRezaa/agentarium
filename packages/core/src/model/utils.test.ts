@@ -140,6 +140,23 @@ describe("collectModelResponse", () => {
     });
   });
 
+  it("throws if the stream emits multiple model responses", async () => {
+    const events: ModelStreamEvent[] = [
+      {
+        type: "model:response",
+        parts: [{ type: "text", text: "Draft" }],
+      },
+      {
+        type: "model:response",
+        parts: [{ type: "text", text: "Final" }],
+      },
+    ];
+
+    await expect(collectModelResponse(toAsyncIterable(events))).rejects.toThrow(
+      "Model stream emitted multiple model:response events.",
+    );
+  });
+
   it("throws if the stream does not emit a model response", async () => {
     const events: ModelStreamEvent[] = [
       { type: "model:text-delta", delta: "Hello" },
