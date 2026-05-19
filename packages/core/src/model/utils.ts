@@ -7,6 +7,7 @@ export async function collectModelResponse(
 ): Promise<ModelResponse> {
   let responseEvent: ModelResponseEvent | undefined;
   let usageEvent: ModelUsageEvent | undefined;
+
   for await (const event of events) {
     if (event.type === "model:response") {
       responseEvent = event;
