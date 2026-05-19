@@ -2,7 +2,11 @@ import type { ModelResponseEvent, ModelUsageEvent } from "./events/final";
 import type { ModelStreamEvent } from "./events/types";
 import type { ModelResponse } from "./types";
 
-/** Collects the final model response from a completed stream, throwing if none was emitted. */
+/**
+ * Extracts the single final `model:response` event from a completed model stream.
+ *
+ * @throws If the stream completes without exactly one `model:response` event.
+ */
 export async function collectModelResponse(
   events: AsyncIterable<ModelStreamEvent>,
 ): Promise<ModelResponse> {
@@ -11,7 +15,11 @@ export async function collectModelResponse(
 
   for await (const event of events) {
     if (event.type === "model:response") {
-      responseEvent = event;
+      if (responseEvent === undefined) {
+        responseEvent = event;
+      } else {
+        throw new Error("Model stream emitted multiple model:response events.");
+      }
     } else if (event.type === "model:usage") {
       usageEvent = event;
     }
