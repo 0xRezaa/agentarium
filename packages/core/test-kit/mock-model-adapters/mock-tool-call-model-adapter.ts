@@ -11,22 +11,22 @@ const mockToolCallModelStreamEvents: ModelStreamEvent[] = [
 
   {
     type: "model:tool-call-delta",
-    toolCallId: "tool-call-1",
-    name: "readFile",
+    toolCallId: "tool-call-1" as ToolCallId,
+    toolName: "readFile",
   },
   {
     type: "model:tool-call-delta",
-    toolCallId: "tool-call-1",
+    toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: '{"path":"',
   },
   {
     type: "model:tool-call-delta",
-    toolCallId: "tool-call-1",
+    toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: "src/index.ts",
   },
   {
     type: "model:tool-call-delta",
-    toolCallId: "tool-call-1",
+    toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: '"}',
   },
   {
