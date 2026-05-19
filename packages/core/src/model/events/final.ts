@@ -1,11 +1,5 @@
 import type { ModelUsage } from "#core/model/usage/types";
-
-/** A normalized request from the model to execute a named tool. */
-export interface ModelToolCall<Input = unknown> {
-  id: string;
-  name: string;
-  input: Input;
-}
+import type { ModelToolCall } from "#core/model/tool-call/types";
 
 /** A complete normalized tool-call request emitted by the model. */
 export interface ModelToolCallEvent {
