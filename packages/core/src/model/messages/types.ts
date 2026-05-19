@@ -23,16 +23,28 @@ export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 
 export type MessagePart = TextPart | ToolCallPart | ToolResultPart;
 
+interface SystemModelMessage {
+  role: "system";
+  parts: TextPart[];
+}
+
+interface UserModelMessage {
+  role: "user";
+  parts: TextPart[];
+}
+
+interface AssistantModelMessage {
+  role: "assistant";
+  parts: Array<TextPart | ToolCallPart>;
+}
+
+interface ToolModelMessage {
+  role: "tool";
+  parts: [ToolResultPart];
+}
+
 export type ModelMessage =
-  | {
-      role: "system" | "user";
-      parts: TextPart[];
-    }
-  | {
-      role: "assistant";
-      parts: Array<TextPart | ToolCallPart>;
-    }
-  | {
-      role: "tool";
-      parts: [ToolResultPart];
-    };
+  | SystemModelMessage
+  | UserModelMessage
+  | AssistantModelMessage
+  | ToolModelMessage;
