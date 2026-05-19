@@ -1,3 +1,5 @@
+import type { ModelUsage } from "#core/model/usage/types";
+
 /** A normalized request from the model to execute a named tool. */
 export interface ModelToolCall<Input = unknown> {
   id: string;
@@ -16,14 +18,6 @@ export interface ModelResponseEvent {
   type: "model:response";
   text?: string;
   toolCalls?: ModelToolCall[];
-}
-
-/** Token/accounting metadata for a model invocation. */
-export interface ModelUsage {
-  inputTokens?: number;
-  outputTokens?: number;
-  totalTokens?: number;
-  source?: "provider" | "estimated";
 }
 
 /** Token/accounting metadata reported or estimated for one model invocation. */
