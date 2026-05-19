@@ -2,7 +2,7 @@
 
 # Agentarium
 
-Browser-native demos for inspectable AI agent systems.
+Browser-native demos for examinable AI agent systems.
 
 ## Packages
 
