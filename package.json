@@ -1,6 +1,6 @@
 {
   "name": "agentarium",
-  "description": "Browser-native demos for inspectable AI agent systems.",
+  "description": "Browser-native demos for examinable AI agent systems.",
   "private": true,
   "workspaces": [
     "packages/*"
