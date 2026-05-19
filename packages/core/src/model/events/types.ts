@@ -1,17 +1,4 @@
-/** Visible assistant text or hidden protocol text emitted incrementally by the model. */
-export interface ModelTextDeltaEvent {
-  type: "model:text-delta";
-  text: string;
-  channel: "assistant" | "protocol";
-}
-
-/** Partial structured tool-call data emitted before the full tool call is complete. */
-export interface ModelToolCallDeltaEvent {
-  type: "model:tool-call-delta";
-  toolCallId?: string;
-  name?: string;
-  inputDelta?: string;
-}
+import type { ModelDeltaEvent } from "./delta";
 
 /** A normalized request from the model to execute a named tool. */
 export interface ModelToolCall<Input = unknown> {
@@ -52,8 +39,6 @@ export type ModelFinalEvent =
   | ModelResponseEvent
   | ModelToolCallEvent
   | ModelUsageEvent;
-
-export type ModelDeltaEvent = ModelTextDeltaEvent | ModelToolCallDeltaEvent;
 
 /** All normalized events emitted by a streaming model adapter. */
 export type ModelStreamEvent = ModelDeltaEvent | ModelFinalEvent;
