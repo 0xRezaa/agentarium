@@ -2,6 +2,7 @@ import type { ModelResponseEvent, ModelUsageEvent } from "./events/final";
 import type { ModelStreamEvent } from "./events/types";
 import type { ModelResponse } from "./types";
 
+/** Collects the final model response from a completed stream, throwing if none was emitted. */
 export async function collectModelResponse(
   events: AsyncIterable<ModelStreamEvent>,
 ): Promise<ModelResponse> {
