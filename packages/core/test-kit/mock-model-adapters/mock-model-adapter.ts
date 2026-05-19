@@ -7,7 +7,7 @@ const mockModelStreamEvents: ModelStreamEvent[] = [
   { type: "model:text-delta", delta: " world" },
   {
     type: "model:response",
-    parts: [{ type: "text", text: "Hello world" }],
+    content: [{ type: "text", text: "Hello world" }],
   },
 ];
 

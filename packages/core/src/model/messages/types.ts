@@ -1,48 +1,31 @@
-import type { ToolCallId } from "#core/tool/id";
-
-export interface TextPart {
-  type: "text";
-  text: string;
-}
-
-export interface ToolPartBase<T extends string> {
-  type: T;
-  toolName: string;
-  toolCallId: ToolCallId;
-}
-
-export interface ToolCallPart extends ToolPartBase<"tool-call"> {
-  input: unknown;
-}
-
-export interface ToolResultPart extends ToolPartBase<"tool-result"> {
-  result: unknown;
-}
+import type {
+  TextPart,
+  ToolCallPart,
+  ToolResultPart,
+} from "#core/model/content/types";
 
 export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 
-export type MessagePart = TextPart | ToolCallPart | ToolResultPart;
-
 export interface SystemModelMessage {
   role: "system";
-  parts: TextPart[];
+  content: TextPart[];
 }
 
 export interface UserModelMessage {
   role: "user";
-  parts: TextPart[];
+  content: TextPart[];
 }
 
-export type AssistantParts = Array<TextPart | ToolCallPart>;
+export type AssistantContent = Array<TextPart | ToolCallPart>;
 
 export interface AssistantModelMessage {
   role: "assistant";
-  parts: AssistantParts;
+  content: AssistantContent;
 }
 
 export interface ToolModelMessage {
   role: "tool";
-  parts: [ToolResultPart];
+  content: [ToolResultPart];
 }
 
 export type ModelMessage =

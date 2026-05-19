@@ -1,10 +1,10 @@
 import type { ModelUsage } from "#core/model/usage/types";
-import type { AssistantParts } from "../messages/types";
+import type { AssistantContent } from "../messages/types";
 
 /** Final output of one model invocation. */
 export interface ModelResponseEvent {
   type: "model:response";
-  parts: AssistantParts;
+  content: AssistantContent;
 }
 
 /** Token/accounting metadata reported or estimated for one model invocation. */

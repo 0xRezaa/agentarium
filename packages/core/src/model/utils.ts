@@ -32,7 +32,7 @@ export async function collectModelResponse(
   return {
     message: {
       role: "assistant",
-      parts: responseEvent.parts,
+      content: responseEvent.content,
     },
     ...(usageEvent ? { usage: usageEvent.usage } : {}),
   };

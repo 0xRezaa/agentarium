@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ModelStreamEvent } from "#core/model/events/types";
 import { collectModelResponse } from "./utils";
 import type { ToolCallId } from "#core/tool/id";
+import type { ModelResponse } from "./types";
 
 describe("collectModelResponse", () => {
   it("returns the final model response from a stream", async () => {
@@ -10,7 +11,7 @@ describe("collectModelResponse", () => {
       { type: "model:text-delta", delta: " world" },
       {
         type: "model:response",
-        parts: [{ type: "text", text: "Hello world" }],
+        content: [{ type: "text", text: "Hello world" }],
       },
     ];
 
@@ -19,9 +20,9 @@ describe("collectModelResponse", () => {
     expect(response).toEqual({
       message: {
         role: "assistant",
-        parts: [{ type: "text", text: "Hello world" }],
+        content: [{ type: "text", text: "Hello world" }],
       },
-    });
+    } satisfies ModelResponse);
   });
 
   it("collects usage emitted by the model stream", async () => {
@@ -29,7 +30,7 @@ describe("collectModelResponse", () => {
       { type: "model:text-delta", delta: "Hello" },
       {
         type: "model:response",
-        parts: [{ type: "text", text: "Hello" }],
+        content: [{ type: "text", text: "Hello" }],
       },
       {
         type: "model:usage",
@@ -47,7 +48,7 @@ describe("collectModelResponse", () => {
     expect(response).toEqual({
       message: {
         role: "assistant",
-        parts: [{ type: "text", text: "Hello" }],
+        content: [{ type: "text", text: "Hello" }],
       },
       usage: {
         inputTokens: 10,
@@ -55,7 +56,7 @@ describe("collectModelResponse", () => {
         totalTokens: 12,
         source: "provider",
       },
-    });
+    } satisfies ModelResponse);
   });
 
   it("returns multiple response parts including tool calls", async () => {
@@ -63,7 +64,7 @@ describe("collectModelResponse", () => {
     const events: ModelStreamEvent[] = [
       {
         type: "model:response",
-        parts: [
+        content: [
           { type: "text", text: "I need to inspect the file." },
           {
             type: "tool-call",
@@ -80,7 +81,7 @@ describe("collectModelResponse", () => {
     expect(response).toEqual({
       message: {
         role: "assistant",
-        parts: [
+        content: [
           { type: "text", text: "I need to inspect the file." },
           {
             type: "tool-call",
@@ -90,7 +91,7 @@ describe("collectModelResponse", () => {
           },
         ],
       },
-    });
+    } satisfies ModelResponse);
   });
 
   it("uses model:response instead of assembling from deltas", async () => {
@@ -110,7 +111,7 @@ describe("collectModelResponse", () => {
       },
       {
         type: "model:response",
-        parts: [
+        content: [
           { type: "text", text: "Correct final text." },
           {
             type: "tool-call",
@@ -127,7 +128,7 @@ describe("collectModelResponse", () => {
     expect(response).toEqual({
       message: {
         role: "assistant",
-        parts: [
+        content: [
           { type: "text", text: "Correct final text." },
           {
             type: "tool-call",
@@ -137,18 +138,18 @@ describe("collectModelResponse", () => {
           },
         ],
       },
-    });
+    } satisfies ModelResponse);
   });
 
   it("throws if the stream emits multiple model responses", async () => {
     const events: ModelStreamEvent[] = [
       {
         type: "model:response",
-        parts: [{ type: "text", text: "Draft" }],
+        content: [{ type: "text", text: "Draft" }],
       },
       {
         type: "model:response",
-        parts: [{ type: "text", text: "Final" }],
+        content: [{ type: "text", text: "Final" }],
       },
     ];
 

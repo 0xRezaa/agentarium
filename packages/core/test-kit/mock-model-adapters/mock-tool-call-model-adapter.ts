@@ -31,7 +31,7 @@ const mockToolCallModelStreamEvents: ModelStreamEvent[] = [
   },
   {
     type: "model:response",
-    parts: [
+    content: [
       { type: "text", text: "I need to inspect the file first." },
       {
         type: "tool-call",
