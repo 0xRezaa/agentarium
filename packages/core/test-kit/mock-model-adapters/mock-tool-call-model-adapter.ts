@@ -8,7 +8,6 @@ export function createMockModelAdapterWithToolCalls(): MockModelAdapter {
 
 const mockToolCallModelStreamEvents: ModelStreamEvent[] = [
   { type: "model:text-delta", delta: "I need to inspect the file first." },
-
   {
     type: "model:tool-call-delta",
     toolCallId: "tool-call-1" as ToolCallId,
