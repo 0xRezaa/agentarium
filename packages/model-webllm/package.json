@@ -5,5 +5,8 @@
   "type": "module",
   "exports": {
     "./types": "./src/types.ts"
+  },
+  "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.83"
   }
 }
