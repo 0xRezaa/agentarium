@@ -16,6 +16,12 @@ export interface UserModelMessage {
   content: TextPart[];
 }
 
+/**
+ * Assistant messages are completed model responses.
+ *
+ * They may contain text parts and tool-call parts.
+ * The harness decides how and when to execute tool calls.
+ */
 export type AssistantContent = Array<TextPart | ToolCallPart>;
 
 export interface AssistantModelMessage {
@@ -23,7 +29,7 @@ export interface AssistantModelMessage {
   content: AssistantContent;
 }
 
-export interface ToolModelMessage {
+export interface ToolResultModelMessage {
   role: "tool";
   content: [ToolResultPart];
 }
@@ -32,4 +38,4 @@ export type ModelMessage =
   | SystemModelMessage
   | UserModelMessage
   | AssistantModelMessage
-  | ToolModelMessage;
+  | ToolResultModelMessage;
