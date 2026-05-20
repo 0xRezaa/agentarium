@@ -4,14 +4,12 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./types": "./src/types.ts",
-    "./model": "./src/model/types.ts",
-    "./model/events": "./src/model/events/types.ts",
-    "./model/content": "./src/model/content/types.ts",
-    "./model/messages": "./src/model/messages/types.ts",
-    "./model/usage": "./src/model/usage/types.ts",
-    "./tool": "./src/tool/types.ts",
-    "./agent": "./src/agent/types.ts",
-    "./test-kit/*": "./src/test-kit/*"
+    "./model": "./src/model/index.ts",
+    "./agent": "./src/agent/index.ts",
+    "./tool": "./src/tool/index.ts",
+    "./harness": "./src/harness/index.ts",
+    "./trace": "./src/trace/index.ts",
+    ".": "./src/index.ts",
+    "./test-kit/*": "./test-kit/*"
   }
 }

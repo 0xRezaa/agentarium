@@ -1,4 +1,5 @@
 import type { ModelStreamEvent } from "#core/model/events/types";
+import type { ModelAdapterId } from "#core/model/id";
 import type { ModelAdapter, ModelResponse } from "#core/model/types";
 import { collectModelResponse } from "#core/model/utils";
 
@@ -15,7 +16,7 @@ export class MockModelAdapter implements ModelAdapter {
   constructor(
     private readonly events: ModelStreamEvent[] = mockModelStreamEvents,
   ) {}
-  id: string = "mock-model-adapter";
+  id: ModelAdapterId = "mock-model-adapter" as ModelAdapterId;
   async *stream(): AsyncIterable<ModelStreamEvent> {
     yield* this.events;
   }

@@ -1,4 +1,5 @@
 import type { ModelStreamEvent } from "./events/types";
+import type { ModelAdapterId } from "./id";
 import type { AssistantMessage, Message } from "./messages/types";
 import type { ModelUsage } from "./usage/types";
 
@@ -12,7 +13,7 @@ export interface ModelResponse {
 }
 
 export interface ModelAdapter {
-  id: string;
+  id: ModelAdapterId;
   generate(request: ModelRequest): Promise<ModelResponse>;
   /**
    * Streams model events and must emit exactly one `model:response`
