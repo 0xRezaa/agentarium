@@ -17,7 +17,7 @@ export interface WebLLMRuntimeConfig<
 // For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
 export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   private readonly engine: MLCEngineInterface;
-  private readonly models: TModels;
+  private readonly modelCatalog: TModels;
   private loadedModelKey?: keyof TModels;
   private loading:
     | {
@@ -40,10 +40,10 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
       },
     };
     this.engine = createEngine(mlcConfig);
-    this.models = models;
+    this.modelCatalog = models;
   }
   getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
-    return this.models[modelKey].model_id;
+    return this.modelCatalog[modelKey].model_id;
   }
   ensureInitialized<K extends keyof TModels>(modelKey: K): Promise<void> {
     if (this.loadedModelKey === modelKey) {
@@ -62,5 +62,8 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
       });
     this.loading = { modelKey, promise };
     return promise;
+  }
+  dispose(): Promise<void> {
+    return this.engine.unload();
   }
 }
