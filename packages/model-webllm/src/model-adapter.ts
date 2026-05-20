@@ -20,13 +20,13 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
     this.id = `web-llm-adapter-${String(modelKey)}` as ModelAdapterId;
   }
   async ensureInitialized(): Promise<void> {
-    // Implementation for initializing the WebLLM adapter
+    await this.repo.ensureInitialized(this.modelKey);
   }
-  async generate(request: ModelRequest): Promise<ModelResponse> {
+  async generate(_request: ModelRequest): Promise<ModelResponse> {
     // Implementation for generating a response using the WebLLM model
     throw new Error("Not implemented yet");
   }
-  async *stream(request: ModelRequest): AsyncIterable<ModelStreamEvent> {
+  async *stream(_request: ModelRequest): AsyncIterable<ModelStreamEvent> {
     // Implementation for streaming responses from the WebLLM model
     throw new Error("Not implemented yet");
   }
