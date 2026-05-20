@@ -9,7 +9,7 @@ import type { Initializable } from "@0xrezaa/core/lifecycle";
 import type { WebLLMRepo } from "./repo";
 import type { WebLLMModelMap } from "./types";
 
-export class WebLLMAdapter<const TModels extends WebLLMModelMap>
+export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   implements ModelAdapter, Initializable
 {
   public readonly id: ModelAdapterId;

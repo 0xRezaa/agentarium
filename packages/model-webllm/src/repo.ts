@@ -6,15 +6,14 @@ import {
 } from "@mlc-ai/web-llm";
 import type { WebLLMModelMap } from "./types";
 
-export interface WebLLMRepoConfig<TModels extends WebLLMModelMap> extends Omit<
-  MLCEngineConfig,
-  "appConfig"
-> {
+export interface WebLLMRepoConfig<
+  TModels extends WebLLMModelMap<TModels>,
+> extends Omit<MLCEngineConfig, "appConfig"> {
   models: TModels;
   cacheBackend?: AppConfig["cacheBackend"];
 }
 
-export class WebLLMRepo<const TModels extends WebLLMModelMap> {
+export class WebLLMRepo<const TModels extends WebLLMModelMap<TModels>> {
   private readonly engine: MLCEngineInterface;
   private readonly config: MLCEngineConfig;
   private readonly models: TModels;
@@ -35,5 +34,8 @@ export class WebLLMRepo<const TModels extends WebLLMModelMap> {
     this.engine = createEngine(mlcConfig);
     this.config = mlcConfig;
     this.models = models;
+  }
+  getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
+    return this.models[modelKey].model_id;
   }
 }
