@@ -6,12 +6,12 @@ import type {
 
 export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 
-export interface SystemModelMessage {
+export interface SystemMessage {
   role: "system";
   content: TextPart[];
 }
 
-export interface UserModelMessage {
+export interface UserMessage {
   role: "user";
   content: TextPart[];
 }
@@ -24,18 +24,18 @@ export interface UserModelMessage {
  */
 export type AssistantContent = Array<TextPart | ToolCallPart>;
 
-export interface AssistantModelMessage {
+export interface AssistantMessage {
   role: "assistant";
   content: AssistantContent;
 }
 
-export interface ToolResultModelMessage {
+export interface ToolResultMessage {
   role: "tool";
   content: [ToolResultPart];
 }
 
-export type ModelMessage =
-  | SystemModelMessage
-  | UserModelMessage
-  | AssistantModelMessage
-  | ToolResultModelMessage;
+export type Message =
+  | SystemMessage
+  | UserMessage
+  | AssistantMessage
+  | ToolResultMessage;

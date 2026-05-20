@@ -1,13 +1,13 @@
 import type { ModelStreamEvent } from "./events/types";
-import type { AssistantModelMessage, ModelMessage } from "./messages/types";
+import type { AssistantMessage, Message } from "./messages/types";
 import type { ModelUsage } from "./usage/types";
 
 export interface ModelRequest {
-  messages: ModelMessage[];
+  messages: Message[];
 }
 
 export interface ModelResponse {
-  message: AssistantModelMessage;
+  message: AssistantMessage;
   usage?: ModelUsage;
 }
 

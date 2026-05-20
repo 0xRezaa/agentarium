@@ -1,5 +1,5 @@
 import type { Agent } from "#core/agent/types";
-import type { ModelMessage } from "#core/model/messages/types";
+import type { Message } from "#core/model/messages/types";
 import type { TraceSink } from "#core/trace/types";
 import type { AgentRunId } from "./id";
 
@@ -29,7 +29,7 @@ export interface AgentRunContext<TContext = unknown> extends HarnessRunOptions {
   runId: AgentRunId;
   agent: Agent;
   input: AgentRunInput<TContext>;
-  messages: ModelMessage[];
+  messages: Message[];
   iteration: number;
 }
 
