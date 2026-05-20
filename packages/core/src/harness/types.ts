@@ -3,6 +3,8 @@ import type { Message } from "#core/model/messages/types";
 import type { TraceSink } from "#core/trace/types";
 import type { AgentRunId } from "./id";
 
+export type * from "./id";
+
 export interface AgentRunInput<TContext = unknown> {
   input: string;
   // TODO: extend with FS and other context

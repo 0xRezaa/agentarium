@@ -2,6 +2,8 @@ import type { AgentId } from "#core/agent/id";
 import type { AgentRunId } from "#core/harness/id";
 import type { ToolCallId } from "./id";
 
+export type * from "./id";
+
 export interface ToolExecutionContext {
   toolCallId: ToolCallId;
   agentId: AgentId;

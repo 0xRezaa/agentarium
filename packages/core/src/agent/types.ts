@@ -2,6 +2,8 @@ import type { Tool } from "#core/tool/types";
 import type { ModelAdapter } from "#core/model/types";
 import type { AgentId } from "./id";
 
+export type * from "./id";
+
 /**
  * Agent loop phases
  *
