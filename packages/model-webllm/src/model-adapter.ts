@@ -6,7 +6,7 @@ import type {
   ModelStreamEvent,
 } from "@0xrezaa/core/model";
 import type { Initializable } from "@0xrezaa/core/lifecycle";
-import type { WebLLMRepo } from "./repo";
+import type { WebLLMRuntime } from "./runtime";
 import type { WebLLMModelMap } from "./types";
 
 export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
@@ -14,7 +14,7 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
 {
   public readonly id: ModelAdapterId;
   constructor(
-    private readonly repo: WebLLMRepo<TModels>,
+    private readonly repo: WebLLMRuntime<TModels>,
     private readonly modelKey: keyof TModels,
   ) {
     this.id = `web-llm-adapter-${String(modelKey)}` as ModelAdapterId;

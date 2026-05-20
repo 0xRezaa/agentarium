@@ -6,7 +6,7 @@ import {
 } from "@mlc-ai/web-llm";
 import type { WebLLMModelMap } from "./types";
 
-export interface WebLLMRepoConfig<
+export interface WebLLMRuntimeConfig<
   TModels extends WebLLMModelMap<TModels>,
 > extends Omit<MLCEngineConfig, "appConfig"> {
   models: TModels;
@@ -15,7 +15,7 @@ export interface WebLLMRepoConfig<
 
 // TODO: Needs extra though. When sharing one repo between multiple adapters pointing to different models, we need to make sure the right model is loaded before each inference call. We can either enforce one adapter per repo, or implement some queuing mechanism to serialize inference calls and ensure the right model is loaded for each call.
 // For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
-export class WebLLMRepo<const TModels extends WebLLMModelMap<TModels>> {
+export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   private readonly engine: MLCEngineInterface;
   private readonly models: TModels;
   private loadedModelKey?: keyof TModels;
@@ -26,7 +26,7 @@ export class WebLLMRepo<const TModels extends WebLLMModelMap<TModels>> {
       }
     | undefined;
   constructor(
-    config: WebLLMRepoConfig<TModels>,
+    config: WebLLMRuntimeConfig<TModels>,
     createEngine: (config: MLCEngineConfig) => MLCEngineInterface = (
       config: MLCEngineConfig,
     ) => new MLCEngine(config),
