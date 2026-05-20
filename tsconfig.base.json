@@ -6,7 +6,9 @@
       "#openharness/*": ["./packages/openharness/src/*"],
       "#openharness": ["./packages/openharness/src"],
       "#core/*": ["./packages/core/src/*"],
-      "#core": ["./packages/core/src"]
+      "#core": ["./packages/core/src"],
+      "#model-webllm/*": ["./packages/model-webllm/src/*"],
+      "#model-webllm": ["./packages/model-webllm/src"]
     },
     "verbatimModuleSyntax": true
   }
