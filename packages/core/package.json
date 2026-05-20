@@ -9,6 +9,7 @@
     "./tool": "./src/tool/index.ts",
     "./harness": "./src/harness/index.ts",
     "./trace": "./src/trace/index.ts",
+    "./lifecycle": "./src/lifecycle/index.ts",
     ".": "./src/index.ts",
     "./test-kit/*": "./test-kit/*"
   }
