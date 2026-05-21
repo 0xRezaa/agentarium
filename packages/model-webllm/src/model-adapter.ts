@@ -8,6 +8,7 @@ import type {
 import type { Initializable } from "@0xrezaa/core/lifecycle";
 import type { WebLLMRuntime } from "./runtime";
 import type { WebLLMModelMap } from "./types";
+import { fromWebLLMChatCompletion, toWebLLMChatRequest } from "./conversation";
 
 export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   implements ModelAdapter, Initializable
@@ -24,9 +25,10 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   }
   async generate(request: ModelRequest): Promise<ModelResponse> {
     return this.runtime.runWithModel(this.modelKey, async (engine, modelId) => {
-      // TODO: convert request into ChatCompletionRequestNonStreaming
-      // engine.chat.completions.create(request);
-      return {} as ModelResponse; // Placeholder until the actual implementation is done
+      const webLLMRequest = toWebLLMChatRequest(request, modelId);
+      const chatCompletion =
+        await engine.chat.completions.create(webLLMRequest);
+      return fromWebLLMChatCompletion(chatCompletion);
     });
   }
   async *stream(_request: ModelRequest): AsyncIterable<ModelStreamEvent> {
