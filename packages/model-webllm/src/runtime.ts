@@ -14,11 +14,6 @@ export interface WebLLMRuntimeConfig<
   cacheBackend?: AppConfig["cacheBackend"];
 }
 
-type OperationWithModel<Returns, Models extends WebLLMModelMap<Models>> = (
-  engine: MLCEngineInterface,
-  modelId: Models[keyof Models]["model_id"],
-) => Returns;
-
 // TODO: Needs extra though. When sharing one repo between multiple adapters pointing to different models, we need to make sure the right model is loaded before each inference call. We can either enforce one adapter per repo, or implement some queuing mechanism to serialize inference calls and ensure the right model is loaded for each call.
 // For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
 export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
@@ -45,18 +40,18 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   }
   async loadModel(modelKey: keyof TModels): Promise<void> {
     if (this.loadedModelKey === modelKey) {
-      return Promise.resolve();
+      return;
     }
     return this.engine.reload(this.getModelId(modelKey)).then(() => {
       this.loadedModelKey = modelKey;
     });
   }
-  getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
+  getModelId(modelKey: keyof TModels): string {
     return this.modelCatalog[modelKey].model_id;
   }
   runWithModel<T>(
     modelKey: keyof TModels,
-    operation: OperationWithModel<Promise<T>, TModels>,
+    operation: (engine: MLCEngineInterface, modelId: string) => Promise<T>,
   ): Promise<T> {
     return this.scheduler.run(async () => {
       await this.loadModel(modelKey);
@@ -65,7 +60,10 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   }
   streamWithModel<T>(
     modelKey: keyof TModels,
-    operation: OperationWithModel<AsyncIterable<T>, TModels>,
+    operation: (
+      engine: MLCEngineInterface,
+      modelId: string,
+    ) => AsyncIterable<T>,
   ): AsyncIterable<T> {
     const load = () => this.loadModel(modelKey);
     const engine = this.engine;
