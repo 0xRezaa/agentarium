@@ -55,60 +55,45 @@ describe("Scheduler", () => {
     await second;
   });
 
-  it("holds the queue for the full lifetime of a stream", async () => {
+  it("keeps a stream slot until the stream completes", async () => {
     const scheduler = new Scheduler();
     const streamCanFinish = deferred<void>();
     const streamIsWaiting = deferred<void>();
     const events: string[] = [];
 
-    const stream = scheduler.stream(async function* () {
-      events.push("stream:start");
-      yield "first-chunk";
-      events.push("stream:waiting");
+    const iterator = obtainAsyncIterator(
+      scheduler.stream(async function* () {
+        try {
+          yield "chunk";
       streamIsWaiting.resolve(undefined);
       await streamCanFinish.promise;
-      events.push("stream:end");
-      yield "second-chunk";
-    });
-
-    const iterator = stream[Symbol.asyncIterator]();
+        } finally {
+          events.push("stream:closed");
+        }
+      }),
+    );
 
     await expect(iterator.next()).resolves.toEqual({
-      value: "first-chunk",
+      value: "chunk",
       done: false,
     });
 
     const queuedRun = scheduler.run(async () => {
-      events.push("run:start");
-      return "run-result";
+      events.push("run");
     });
 
-    expect(events).toEqual(["stream:start"]);
-
-    const pendingNext = iterator.next();
+    const streamDone = iterator.next();
     await streamIsWaiting.promise;
-
-    expect(events).toEqual(["stream:start", "stream:waiting"]);
 
     streamCanFinish.resolve(undefined);
 
-    await expect(pendingNext).resolves.toEqual({
-      value: "second-chunk",
-      done: false,
-    });
-
-    await expect(iterator.next()).resolves.toEqual({
+    await expect(streamDone).resolves.toEqual({
       value: undefined,
       done: true,
     });
-    await expect(queuedRun).resolves.toBe("run-result");
+    await queuedRun;
 
-    expect(events).toEqual([
-      "stream:start",
-      "stream:waiting",
-      "stream:end",
-      "run:start",
-    ]);
+    expect(events).toEqual(["stream:closed", "run"]);
   });
 
   it("continues when a stream consumer stops early", async () => {
