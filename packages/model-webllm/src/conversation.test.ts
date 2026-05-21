@@ -170,6 +170,48 @@ describe("fromWebLLMChatCompletion", () => {
     );
   });
 
+  it("maps assistant text content to a core text part", () => {
+    const response = fromWebLLMChatCompletion(
+      createChatCompletion([createChoice(0, "Answer.")]),
+    );
+
+    expect(response.message).toEqual({
+      role: "assistant",
+      content: [{ type: "text", text: "Answer." }],
+    });
+  });
+
+  it("maps null assistant content to an empty assistant content array", () => {
+    const response = fromWebLLMChatCompletion(
+      createChatCompletion([createChoice(0, null)]),
+    );
+
+    expect(response.message).toEqual({
+      role: "assistant",
+      content: [],
+    });
+  });
+
+  it("maps WebLLM tool calls to core tool-call parts", () => {
+    const response = fromWebLLMChatCompletion(
+      createChatCompletion([
+        createChoice(0, "I need to inspect the file.", [
+          createToolCall("tool-call-1", "readFile", '{"path":"src/index.ts"}'),
+        ]),
+      ]),
+    );
+
+    expect(response.message.content).toEqual([
+      { type: "text", text: "I need to inspect the file." },
+      {
+        type: "tool-call",
+        toolCallId: "tool-call-1",
+        toolName: "readFile",
+        input: '{"path":"src/index.ts"}',
+      },
+    ]);
+  });
+
   it("maps usage when WebLLM reports token counts", () => {
     const response = fromWebLLMChatCompletion(
       createChatCompletion([createChoice(0, "Answer.")], {
@@ -192,6 +234,14 @@ describe("fromWebLLMChatCompletion", () => {
       totalTokens: 5,
       source: "provider",
     });
+  });
+
+  it("omits usage when WebLLM does not report token counts", () => {
+    const response = fromWebLLMChatCompletion(
+      createChatCompletion([createChoice(0, "Answer.")]),
+    );
+
+    expect("usage" in response).toBe(false);
   });
 });
 
