@@ -28,12 +28,12 @@ describe("Scheduler", () => {
       return "third-result";
     });
 
-    await expectEventually(() => [...events]).toEqual(["first:start"]);
+    await expectEventually(() => events).toEqual(["first:start"]);
 
     firstCanFinish.resolve(undefined);
     await expect(first).resolves.toBe("first-result");
 
-    await expectEventually(() => [...events]).toEqual([
+    await expectEventually(() => events).toEqual([
       "first:start",
       "first:end",
       "second:start",
