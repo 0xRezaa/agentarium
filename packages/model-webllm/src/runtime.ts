@@ -5,6 +5,7 @@ import {
   type MLCEngineInterface,
 } from "@mlc-ai/web-llm";
 import type { WebLLMModelMap } from "./types";
+import { Scheduler } from "@0xrezaa/core/concurrency";
 
 export interface WebLLMRuntimeConfig<
   TModels extends WebLLMModelMap<TModels>,
@@ -16,15 +17,11 @@ export interface WebLLMRuntimeConfig<
 // TODO: Needs extra though. When sharing one repo between multiple adapters pointing to different models, we need to make sure the right model is loaded before each inference call. We can either enforce one adapter per repo, or implement some queuing mechanism to serialize inference calls and ensure the right model is loaded for each call.
 // For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
 export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
+  private readonly scheduler: Scheduler = new Scheduler();
   private readonly engine: MLCEngineInterface;
   private readonly modelCatalog: TModels;
-  private loadedModelKey?: keyof TModels;
-  private loading:
-    | {
-        modelKey: keyof TModels;
-        promise: Promise<void>;
-      }
-    | undefined;
+  private loadedModelKey: keyof TModels | undefined;
+  private loadingModelKey: keyof TModels | undefined;
   constructor(
     config: WebLLMRuntimeConfig<TModels>,
     createEngine: (config: MLCEngineConfig) => MLCEngineInterface = (
@@ -42,26 +39,38 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
     this.engine = createEngine(mlcConfig);
     this.modelCatalog = models;
   }
-  getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
-    return this.modelCatalog[modelKey].model_id;
-  }
-  ensureInitialized<K extends keyof TModels>(modelKey: K): Promise<void> {
-    if (this.loadedModelKey === modelKey) {
-      return Promise.resolve();
-    }
-    if (this.loading && this.loading.modelKey === modelKey) {
-      return this.loading.promise;
-    }
-    const promise = this.engine
+  loadModel(modelKey: keyof TModels): Promise<void> {
+    this.loadingModelKey = modelKey;
+    return this.engine
       .reload(this.getModelId(modelKey))
       .then(() => {
         this.loadedModelKey = modelKey;
       })
       .finally(() => {
-        this.loading = undefined;
+        this.loadingModelKey = undefined;
       });
-    this.loading = { modelKey, promise };
-    return promise;
+  }
+  getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
+    return this.modelCatalog[modelKey].model_id;
+  }
+  runWithModel<T>(
+    modelKey: keyof TModels,
+    operation: () => Promise<T>,
+  ): Promise<T> {
+    return this.scheduler.run(async () => {
+      await this.loadModel(modelKey);
+      return operation();
+    });
+  }
+  streamWithEngine<T>(
+    modelKey: keyof TModels,
+    operation: () => AsyncIterable<T>,
+  ): AsyncIterable<T> {
+    const load = () => this.loadModel(modelKey);
+    return this.scheduler.stream(async function* () {
+      await load();
+      yield* operation();
+    });
   }
   dispose(): Promise<void> {
     return this.engine.unload();
