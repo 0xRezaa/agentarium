@@ -17,6 +17,124 @@ import {
   toWebLLMChatRequest,
 } from "./conversation";
 
+describe("toWebLLMChatRequest", () => {
+  it("sets the target model id and disables streaming", () => {
+    const request = toWebLLMChatRequest({ messages: [] }, "test-model");
+
+    expect(request).toEqual({
+      messages: [],
+      stream: false,
+      model: "test-model",
+    });
+  });
+
+  it("preserves conversation message order", () => {
+    const toolCallId = "tool-call-1" as ToolCallId;
+    const request = toWebLLMChatRequest(
+      {
+        messages: [
+          createSystemMessage("System."),
+          createUserMessage("User."),
+          createAssistantMessage("Assistant."),
+          createToolResultMessage(toolCallId, "Tool."),
+        ],
+      },
+      "test-model",
+    );
+
+    expect(request.messages.map((message) => message.role)).toEqual([
+      "system",
+      "user",
+      "assistant",
+      "tool",
+    ]);
+  });
+
+  it("joins system and user text parts in order", () => {
+    const request = toWebLLMChatRequest(
+      {
+        messages: [
+          createSystemMessage("You are ", "brief."),
+          createUserMessage("Say ", "hello."),
+        ],
+      },
+      "test-model",
+    );
+
+    expect(request.messages).toEqual([
+      { role: "system", content: "You are brief." },
+      { role: "user", content: "Say hello." },
+    ]);
+  });
+
+  it("maps only assistant text content for now", () => {
+    const toolCallId = "tool-call-1" as ToolCallId;
+    const request = toWebLLMChatRequest(
+      {
+        messages: [
+          {
+            role: "assistant",
+            content: [
+              { type: "text", text: "I need a tool." },
+              {
+                type: "tool-call",
+                toolCallId,
+                toolName: "readFile",
+                input: { path: "src/index.ts" },
+              },
+            ],
+          },
+        ],
+      },
+      "test-model",
+    );
+
+    expect(request.messages).toEqual([
+      { role: "assistant", content: "I need a tool." },
+    ]);
+  });
+
+  it("maps an assistant message with no text content to null content", () => {
+    const request = toWebLLMChatRequest(
+      {
+        messages: [
+          {
+            role: "assistant",
+            content: [
+              {
+                type: "tool-call",
+                toolCallId: "tool-call-1" as ToolCallId,
+                toolName: "readFile",
+                input: { path: "src/index.ts" },
+              },
+            ],
+          },
+        ],
+      },
+      "test-model",
+    );
+
+    expect(request.messages).toEqual([{ role: "assistant", content: null }]);
+  });
+
+  it("maps tool result messages to WebLLM tool messages", () => {
+    const toolCallId = "tool-call-1" as ToolCallId;
+    const request = toWebLLMChatRequest(
+      {
+        messages: [createToolResultMessage(toolCallId, { ok: true })],
+      },
+      "test-model",
+    );
+
+    expect(request.messages).toEqual([
+      {
+        role: "tool",
+        tool_call_id: toolCallId,
+        content: '{"ok":true}',
+      },
+    ]);
+  });
+});
 
 describe("fromWebLLMChatCompletion", () => {
   it("uses the first choice by default instead of combining alternatives", () => {
