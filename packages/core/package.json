@@ -12,6 +12,6 @@
     "./lifecycle": "./src/lifecycle/index.ts",
     "./concurrency": "./src/concurrency/index.ts",
     ".": "./src/index.ts",
-    "./test-kit/*": "./test-kit/*"
+    "./test-kit/*": "./test-kit/*.ts"
   }
 }
