@@ -1,9 +1,22 @@
-import type { ChatCompletion } from "@mlc-ai/web-llm";
+import type {
+  ChatCompletion,
+  ChatCompletionMessageToolCall,
+  CompletionUsage,
+} from "@mlc-ai/web-llm";
+import type { ToolCallId } from "@0xrezaa/core/tool";
+import {
+  createAssistantMessage,
+  createSystemMessage,
+  createToolResultMessage,
+  createUserMessage,
+} from "@0xrezaa/core/test-kit/model-messages";
 import { describe, expect, it } from "vitest";
 import {
   fromWebLLMChatCompletion,
   selectFirstWebLLMChoice,
+  toWebLLMChatRequest,
 } from "./conversation";
+
 
 describe("fromWebLLMChatCompletion", () => {
   it("uses the first choice by default instead of combining alternatives", () => {
@@ -66,7 +79,7 @@ describe("fromWebLLMChatCompletion", () => {
 
 function createChatCompletion(
   choices: ChatCompletion.Choice[],
-  usage?: ChatCompletion["usage"],
+  usage?: CompletionUsage,
 ): ChatCompletion {
   return {
     id: "chatcmpl-test",
@@ -78,7 +91,11 @@ function createChatCompletion(
   };
 }
 
-function createChoice(index: number, content: string): ChatCompletion.Choice {
+function createChoice(
+  index: number,
+  content: string | null,
+  toolCalls?: Array<ChatCompletionMessageToolCall>,
+): ChatCompletion.Choice {
   return {
     finish_reason: "stop",
     index,
@@ -86,6 +103,22 @@ function createChoice(index: number, content: string): ChatCompletion.Choice {
     message: {
       role: "assistant",
       content,
+      ...(toolCalls ? { tool_calls: toolCalls } : {}),
+    },
+  };
+}
+
+function createToolCall(
+  id: string,
+  name: string,
+  args: string,
+): ChatCompletionMessageToolCall {
+  return {
+    id,
+    type: "function",
+    function: {
+      name,
+      arguments: args,
     },
   };
 }
