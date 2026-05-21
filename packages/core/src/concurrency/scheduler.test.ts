@@ -28,16 +28,16 @@ describe("Scheduler", () => {
       return "third-result";
     });
 
-    await expect
-      .poll(() => [...events], { interval: 1, timeout: 100 })
-      .toEqual(["first:start"]);
+    await expectEventually(() => [...events]).toEqual(["first:start"]);
 
     firstCanFinish.resolve(undefined);
     await expect(first).resolves.toBe("first-result");
 
-    await expect
-      .poll(() => [...events], { interval: 1, timeout: 100 })
-      .toEqual(["first:start", "first:end", "second:start"]);
+    await expectEventually(() => [...events]).toEqual([
+      "first:start",
+      "first:end",
+      "second:start",
+    ]);
 
     secondCanFinish.resolve(undefined);
     await expect(second).resolves.toBe("second-result");
@@ -68,9 +68,7 @@ describe("Scheduler", () => {
       return "second-result";
     });
 
-    await expect
-      .poll(() => [...events], { interval: 1, timeout: 100 })
-      .toEqual(["first:start"]);
+    await expectEventually(() => [...events]).toEqual(["first:start"]);
 
     firstCanReject.reject(new Error("first failed"));
 
@@ -227,3 +225,7 @@ describe("Scheduler", () => {
     expect(events).toEqual(["run:start", "stream:start"]);
   });
 });
+
+function expectEventually<T>(actual: () => T) {
+  return expect.poll(actual, { interval: 1, timeout: 100 });
+}
