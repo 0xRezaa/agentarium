@@ -250,7 +250,7 @@ function createChatCompletion(
   usage?: CompletionUsage,
 ): ChatCompletion {
   return {
-    id: "chatcmpl-test",
+    id: "chat-completion-test",
     choices,
     model: "test-model",
     object: "chat.completion",
