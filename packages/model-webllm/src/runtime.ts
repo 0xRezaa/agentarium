@@ -14,6 +14,11 @@ export interface WebLLMRuntimeConfig<
   cacheBackend?: AppConfig["cacheBackend"];
 }
 
+type OperationWithModel<Returns, Models extends WebLLMModelMap<Models>> = (
+  engine: MLCEngineInterface,
+  modelId: Models[keyof Models]["model_id"],
+) => Returns;
+
 // TODO: Needs extra though. When sharing one repo between multiple adapters pointing to different models, we need to make sure the right model is loaded before each inference call. We can either enforce one adapter per repo, or implement some queuing mechanism to serialize inference calls and ensure the right model is loaded for each call.
 // For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
 export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
@@ -51,21 +56,23 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   }
   runWithModel<T>(
     modelKey: keyof TModels,
-    operation: () => Promise<T>,
+    operation: OperationWithModel<Promise<T>, TModels>,
   ): Promise<T> {
     return this.scheduler.run(async () => {
       await this.loadModel(modelKey);
-      return operation();
+      return operation(this.engine, this.getModelId(modelKey));
     });
   }
   streamWithModel<T>(
     modelKey: keyof TModels,
-    operation: () => AsyncIterable<T>,
+    operation: OperationWithModel<AsyncIterable<T>, TModels>,
   ): AsyncIterable<T> {
     const load = () => this.loadModel(modelKey);
+    const engine = this.engine;
+    const modelId = this.getModelId(modelKey);
     return this.scheduler.stream(async function* () {
       await load();
-      yield* operation();
+      yield* operation(engine, modelId);
     });
   }
   dispose(): Promise<void> {
