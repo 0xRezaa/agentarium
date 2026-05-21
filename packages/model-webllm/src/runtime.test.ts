@@ -1,5 +1,5 @@
 import type { MLCEngineConfig, MLCEngineInterface } from "@mlc-ai/web-llm";
-import { toAsyncIterator } from "@0xrezaa/core/test-kit/utils.js";
+import { toAsyncIterator } from "@0xrezaa/core/test-kit/utils";
 import { describe, expect, it, vi } from "vitest";
 import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime";
 
@@ -15,7 +15,9 @@ const models = {
   },
 } as const;
 
-function createRuntime(config: Partial<WebLLMRuntimeConfig<string>> = {}) {
+function setupWebLLMRuntime(
+  config: Partial<Omit<WebLLMRuntimeConfig<typeof models>, "models">> = {},
+) {
   let engineConfig: MLCEngineConfig | undefined;
   const reload = vi
     .fn<MLCEngineInterface["reload"]>()
@@ -41,7 +43,7 @@ function createRuntime(config: Partial<WebLLMRuntimeConfig<string>> = {}) {
 
 describe("WebLLMRuntime", () => {
   it("configures WebLLM with the model catalog and reloads by model key", async () => {
-    const { engineConfig, reload, runtime } = createRuntime({
+    const { engineConfig, reload, runtime } = setupWebLLMRuntime({
       cacheBackend: "indexeddb",
       logLevel: "WARN",
     });
@@ -60,7 +62,7 @@ describe("WebLLMRuntime", () => {
   });
 
   it("loads the model before running an operation", async () => {
-    const { reload, runtime } = createRuntime();
+    const { reload, runtime } = setupWebLLMRuntime();
     const events: string[] = [];
     reload.mockImplementation(async () => {
       events.push("load");
@@ -77,7 +79,7 @@ describe("WebLLMRuntime", () => {
   });
 
   it("loads the model before starting a stream", async () => {
-    const { reload, runtime } = createRuntime();
+    const { reload, runtime } = setupWebLLMRuntime();
     const events: string[] = [];
     reload.mockImplementation(async () => {
       events.push("load");
