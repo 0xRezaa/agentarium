@@ -36,7 +36,7 @@ describe("Scheduler", () => {
     const first = scheduler.run(async () => {
       firstStarted.resolve(undefined);
       try {
-      await firstCanReject.promise;
+        await firstCanReject.promise;
       } catch (error) {
         firstRejected = true;
         throw error;
@@ -59,16 +59,16 @@ describe("Scheduler", () => {
     const scheduler = new Scheduler();
     const streamCanFinish = deferred<void>();
     const streamIsWaiting = deferred<void>();
-    const events: string[] = [];
+    let streamClosed = false;
 
     const iterator = obtainAsyncIterator(
       scheduler.stream(async function* () {
         try {
           yield "chunk";
-      streamIsWaiting.resolve(undefined);
-      await streamCanFinish.promise;
+          streamIsWaiting.resolve(undefined);
+          await streamCanFinish.promise;
         } finally {
-          events.push("stream:closed");
+          streamClosed = true;
         }
       }),
     );
@@ -79,7 +79,7 @@ describe("Scheduler", () => {
     });
 
     const queuedRun = scheduler.run(async () => {
-      events.push("run");
+      expect(streamClosed).toBe(true);
     });
 
     const streamDone = iterator.next();
@@ -92,8 +92,6 @@ describe("Scheduler", () => {
       done: true,
     });
     await queuedRun;
-
-    expect(events).toEqual(["stream:closed", "run"]);
   });
 
   it("continues when a stream consumer stops early", async () => {
@@ -102,11 +100,11 @@ describe("Scheduler", () => {
 
     const iterator = obtainAsyncIterator(
       scheduler.stream(async function* () {
-      try {
-        yield "chunk";
-      } finally {
+        try {
+          yield "chunk";
+        } finally {
           streamClosed = true;
-      }
+        }
       }),
     );
 
@@ -125,13 +123,16 @@ describe("Scheduler", () => {
 
   it("continues when a stream throws while iterating", async () => {
     const scheduler = new Scheduler();
-    let streamFailed = false;
+    let streamClosed = false;
 
     const iterator = obtainAsyncIterator(
       scheduler.stream(async function* () {
-      yield "chunk";
-        streamFailed = true;
-      throw new Error("stream failed");
+        try {
+          yield "chunk";
+          throw new Error("stream failed");
+        } finally {
+          streamClosed = true;
+        }
       }),
     );
     await expect(iterator.next()).resolves.toEqual({
@@ -140,7 +141,7 @@ describe("Scheduler", () => {
     });
 
     const queuedRun = scheduler.run(async () => {
-      expect(streamFailed).toBe(true);
+      expect(streamClosed).toBe(true);
     });
 
     await expect(iterator.next()).rejects.toThrow("stream failed");
