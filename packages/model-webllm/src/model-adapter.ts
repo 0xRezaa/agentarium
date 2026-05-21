@@ -20,7 +20,7 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
     this.id = `web-llm-adapter-${String(modelKey)}` as ModelAdapterId;
   }
   async ensureInitialized(): Promise<void> {
-    await this.runtime.ensureInitialized(this.modelKey);
+    await this.runtime.loadModel(this.modelKey);
   }
   async generate(_request: ModelRequest): Promise<ModelResponse> {
     // Implementation for generating a response using the WebLLM model
