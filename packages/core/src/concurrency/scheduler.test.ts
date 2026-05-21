@@ -168,7 +168,3 @@ describe("Scheduler", () => {
     expect(streamStarted).toBe(true);
   });
 });
-
-function expectEventually<T>(actual: () => T) {
-  return expect.poll(actual, { interval: 1, timeout: 100 });
-}
