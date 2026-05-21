@@ -14,8 +14,6 @@ export interface WebLLMRuntimeConfig<
   cacheBackend?: AppConfig["cacheBackend"];
 }
 
-// TODO: Needs extra though. When sharing one repo between multiple adapters pointing to different models, we need to make sure the right model is loaded before each inference call. We can either enforce one adapter per repo, or implement some queuing mechanism to serialize inference calls and ensure the right model is loaded for each call.
-// For simplicity, we can start with enforcing one adapter per repo, and later implement the queuing mechanism if needed.
 export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   private readonly scheduler: Scheduler = new Scheduler();
   private readonly engine: MLCEngineInterface;
