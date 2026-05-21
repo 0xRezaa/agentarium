@@ -178,28 +178,23 @@ describe("Scheduler", () => {
 
   it("does not acquire a stream slot until iteration begins", async () => {
     const scheduler = new Scheduler();
-    const events: string[] = [];
+    let streamStarted = false;
 
     const stream = scheduler.stream(async function* () {
-      events.push("stream:start");
+      streamStarted = true;
       yield "chunk";
     });
 
-    const run = scheduler.run(async () => {
-      events.push("run:start");
-      return "run-result";
-    });
+    await scheduler.run(async () => undefined);
 
-    await expect(run).resolves.toBe("run-result");
+    expect(streamStarted).toBe(false);
 
-    expect(events).toEqual(["run:start"]);
-
-    await expect(stream[Symbol.asyncIterator]().next()).resolves.toEqual({
+    await expect(obtainAsyncIterator(stream).next()).resolves.toEqual({
       value: "chunk",
       done: false,
     });
 
-    expect(events).toEqual(["run:start", "stream:start"]);
+    expect(streamStarted).toBe(true);
   });
 });
 
