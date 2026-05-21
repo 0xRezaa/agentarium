@@ -17,10 +17,10 @@ export class Scheduler {
     };
   }
 
-  async run<T>(fn: () => Promise<T>): Promise<T> {
+  async run<T>(operation: () => Promise<T>): Promise<T> {
     const release = await this.acquireSlot();
     try {
-      return await fn();
+      return await operation();
     } catch (error) {
       throw error;
     } finally {
@@ -28,10 +28,10 @@ export class Scheduler {
     }
   }
 
-  async *stream<T>(fn: () => AsyncIterable<T>): AsyncIterable<T> {
+  async *stream<T>(streamOperation: () => AsyncIterable<T>): AsyncIterable<T> {
     const release = await this.acquireSlot();
     try {
-      yield* fn();
+      yield* streamOperation();
     } finally {
       release();
     }
