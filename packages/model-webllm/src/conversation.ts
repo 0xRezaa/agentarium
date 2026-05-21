@@ -5,8 +5,8 @@ import {
   type ModelRequest,
   type ModelResponse,
   type ModelUsage,
-} from "#core/model";
-import type { ToolCallId } from "#core/tool/id";
+} from "@0xrezaa/core/model";
+import type { ToolCallId } from "@0xrezaa/core/tool";
 import type {
   ChatCompletion,
   ChatCompletionMessage,
@@ -14,6 +14,10 @@ import type {
   ChatCompletionRequestNonStreaming,
   CompletionUsage,
 } from "@mlc-ai/web-llm";
+
+export type WebLLMChoiceSelector = (
+  choices: readonly ChatCompletion.Choice[],
+) => ChatCompletion.Choice;
 
 function toWebLLMMessages(messages: Message[]): ChatCompletionMessageParam[] {
   return messages.map((message) => {
@@ -80,21 +84,15 @@ function fromWebLLMChatCompletionMessage(
   };
 }
 
-function fromWebLLMChoicesToAssistantMessage(
-  choices: ChatCompletion.Choice[],
-): AssistantMessage {
-  return choices.reduce(
-    (assistantMessage, { message }) => {
-      assistantMessage.content.push(
-        ...fromWebLLMChatCompletionMessage(message).content,
-      );
-      return assistantMessage;
-    },
-    {
-      role: "assistant",
-      content: [],
-    } as AssistantMessage,
-  );
+export function selectFirstWebLLMChoice(
+  choices: readonly ChatCompletion.Choice[],
+): ChatCompletion.Choice {
+  // Chat completion choices are alternative completions from `n`, not parts of one response.
+  const [choice] = choices;
+  if (!choice) {
+    throw new Error("WebLLM returned no completion choices.");
+  }
+  return choice;
 }
 
 function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
@@ -109,10 +107,12 @@ function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
 
 export function fromWebLLMChatCompletion(
   completion: ChatCompletion,
+  selectChoice: WebLLMChoiceSelector = selectFirstWebLLMChoice,
 ): ModelResponse {
   const { choices, usage } = completion;
+  const choice = selectChoice(choices);
   return {
-    message: fromWebLLMChoicesToAssistantMessage(choices),
+    message: fromWebLLMChatCompletionMessage(choice.message),
     ...(usage ? { usage: fromWebLLMCompletionUsage(usage) } : {}),
   };
 }
