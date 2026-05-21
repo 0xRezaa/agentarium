@@ -52,7 +52,7 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
       return operation();
     });
   }
-  streamWithEngine<T>(
+  streamWithModel<T>(
     modelKey: keyof TModels,
     operation: () => AsyncIterable<T>,
   ): AsyncIterable<T> {
