@@ -5,3 +5,4 @@ export type * from "./messages/types";
 export type * from "./content/types";
 export type * from "./usage/types";
 export * from "./utils";
+export * from "./content/utils";
