@@ -111,21 +111,19 @@ describe("Scheduler", () => {
     ]);
   });
 
-  it("releases the queue when a stream consumer stops early", async () => {
+  it("continues when a stream consumer stops early", async () => {
     const scheduler = new Scheduler();
-    const events: string[] = [];
+    let streamClosed = false;
 
-    const stream = scheduler.stream(async function* () {
+    const iterator = obtainAsyncIterator(
+      scheduler.stream(async function* () {
       try {
-        events.push("stream:start");
         yield "chunk";
-        events.push("stream:unreachable");
       } finally {
-        events.push("stream:finally");
+          streamClosed = true;
       }
-    });
-
-    const iterator = stream[Symbol.asyncIterator]();
+      }),
+    );
 
     await expect(iterator.next()).resolves.toEqual({
       value: "chunk",
@@ -133,16 +131,11 @@ describe("Scheduler", () => {
     });
 
     const queuedRun = scheduler.run(async () => {
-      events.push("run:start");
-      return "run-result";
+      expect(streamClosed).toBe(true);
     });
 
-    expect(events).toEqual(["stream:start"]);
-
     await iterator.return?.(undefined);
-    await expect(queuedRun).resolves.toBe("run-result");
-
-    expect(events).toEqual(["stream:start", "stream:finally", "run:start"]);
+    await queuedRun;
   });
 
   it("continues when a stream throws while iterating", async () => {
