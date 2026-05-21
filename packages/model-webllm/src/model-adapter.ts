@@ -14,13 +14,13 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
 {
   public readonly id: ModelAdapterId;
   constructor(
-    private readonly repo: WebLLMRuntime<TModels>,
+    private readonly runtime: WebLLMRuntime<TModels>,
     private readonly modelKey: keyof TModels,
   ) {
     this.id = `web-llm-adapter-${String(modelKey)}` as ModelAdapterId;
   }
   async ensureInitialized(): Promise<void> {
-    await this.repo.ensureInitialized(this.modelKey);
+    await this.runtime.ensureInitialized(this.modelKey);
   }
   async generate(_request: ModelRequest): Promise<ModelResponse> {
     // Implementation for generating a response using the WebLLM model
