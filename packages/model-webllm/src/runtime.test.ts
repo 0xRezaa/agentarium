@@ -61,6 +61,16 @@ describe("WebLLMRuntime", () => {
     expect(reload).toHaveBeenCalledWith("small-model");
   });
 
+  it("does not reload a model that is already loaded", async () => {
+    const { reload, runtime } = setupWebLLMRuntime();
+
+    await runtime.loadModel("small");
+    await runtime.loadModel("small");
+
+    expect(reload).toHaveBeenCalledTimes(1);
+    expect(reload).toHaveBeenCalledWith("small-model");
+  });
+
   it("loads the model before running an operation", async () => {
     const { reload, runtime } = setupWebLLMRuntime();
     const events: string[] = [];
