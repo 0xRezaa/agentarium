@@ -22,9 +22,12 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   async ensureInitialized(): Promise<void> {
     await this.runtime.loadModel(this.modelKey);
   }
-  async generate(_request: ModelRequest): Promise<ModelResponse> {
-    // Implementation for generating a response using the WebLLM model
-    throw new Error("Not implemented yet");
+  async generate(request: ModelRequest): Promise<ModelResponse> {
+    return this.runtime.runWithModel(this.modelKey, async (engine, modelId) => {
+      // TODO: convert request into ChatCompletionRequestNonStreaming
+      // engine.chat.completions.create(request);
+      return {} as ModelResponse; // Placeholder until the actual implementation is done
+    });
   }
   async *stream(_request: ModelRequest): AsyncIterable<ModelStreamEvent> {
     // Implementation for streaming responses from the WebLLM model
