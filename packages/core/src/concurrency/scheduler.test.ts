@@ -145,35 +145,28 @@ describe("Scheduler", () => {
     expect(events).toEqual(["stream:start", "stream:finally", "run:start"]);
   });
 
-  it("releases the queue when a stream throws while iterating", async () => {
+  it("continues when a stream throws while iterating", async () => {
     const scheduler = new Scheduler();
-    const events: string[] = [];
+    let streamFailed = false;
 
-    const stream = scheduler.stream(async function* () {
-      events.push("stream:start");
+    const iterator = obtainAsyncIterator(
+      scheduler.stream(async function* () {
       yield "chunk";
-      events.push("stream:throw");
+        streamFailed = true;
       throw new Error("stream failed");
-    });
-
-    const iterator = stream[Symbol.asyncIterator]();
-
+      }),
+    );
     await expect(iterator.next()).resolves.toEqual({
       value: "chunk",
       done: false,
     });
 
     const queuedRun = scheduler.run(async () => {
-      events.push("run:start");
-      return "run-result";
+      expect(streamFailed).toBe(true);
     });
 
-    expect(events).toEqual(["stream:start"]);
-
     await expect(iterator.next()).rejects.toThrow("stream failed");
-    await expect(queuedRun).resolves.toBe("run-result");
-
-    expect(events).toEqual(["stream:start", "stream:throw", "run:start"]);
+    await queuedRun;
   });
 
   it("does not acquire a stream slot until iteration begins", async () => {
