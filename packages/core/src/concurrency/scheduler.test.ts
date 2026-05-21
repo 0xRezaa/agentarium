@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Scheduler } from "./scheduler";
-import { deferred, obtainAsyncIterator } from "../../test-kit/utils";
+import { deferred, toAsyncIterator } from "../../test-kit/utils";
 
 describe("Scheduler", () => {
   it("runs the next operation after the current operation completes", async () => {
@@ -61,7 +61,7 @@ describe("Scheduler", () => {
     const streamIsWaiting = deferred<void>();
     let streamClosed = false;
 
-    const iterator = obtainAsyncIterator(
+    const iterator = toAsyncIterator(
       scheduler.stream(async function* () {
         try {
           yield "chunk";
@@ -98,7 +98,7 @@ describe("Scheduler", () => {
     const scheduler = new Scheduler();
     let streamClosed = false;
 
-    const iterator = obtainAsyncIterator(
+    const iterator = toAsyncIterator(
       scheduler.stream(async function* () {
         try {
           yield "chunk";
@@ -125,7 +125,7 @@ describe("Scheduler", () => {
     const scheduler = new Scheduler();
     let streamClosed = false;
 
-    const iterator = obtainAsyncIterator(
+    const iterator = toAsyncIterator(
       scheduler.stream(async function* () {
         try {
           yield "chunk";
@@ -161,7 +161,7 @@ describe("Scheduler", () => {
 
     expect(streamStarted).toBe(false);
 
-    await expect(obtainAsyncIterator(stream).next()).resolves.toEqual({
+    await expect(toAsyncIterator(stream).next()).resolves.toEqual({
       value: "chunk",
       done: false,
     });

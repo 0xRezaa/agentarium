@@ -15,7 +15,7 @@ export function deferred<T>(): Deferred<T> {
   return { promise, resolve, reject };
 }
 
-export function obtainAsyncIterator<T>(
+export function toAsyncIterator<T>(
   iterable: AsyncIterable<T>,
 ): AsyncIterator<T> {
   return iterable[Symbol.asyncIterator]();
