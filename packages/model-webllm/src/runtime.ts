@@ -20,8 +20,6 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
   private readonly scheduler: Scheduler = new Scheduler();
   private readonly engine: MLCEngineInterface;
   private readonly modelCatalog: TModels;
-  private loadedModelKey: keyof TModels | undefined;
-  private loadingModelKey: keyof TModels | undefined;
   constructor(
     config: WebLLMRuntimeConfig<TModels>,
     createEngine: (config: MLCEngineConfig) => MLCEngineInterface = (
@@ -40,15 +38,7 @@ export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
     this.modelCatalog = models;
   }
   loadModel(modelKey: keyof TModels): Promise<void> {
-    this.loadingModelKey = modelKey;
-    return this.engine
-      .reload(this.getModelId(modelKey))
-      .then(() => {
-        this.loadedModelKey = modelKey;
-      })
-      .finally(() => {
-        this.loadingModelKey = undefined;
-      });
+    return this.engine.reload(this.getModelId(modelKey));
   }
   getModelId<K extends keyof TModels>(modelKey: K): TModels[K]["model_id"] {
     return this.modelCatalog[modelKey].model_id;
