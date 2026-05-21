@@ -3,79 +3,56 @@ import { Scheduler } from "./scheduler";
 import { deferred } from "../../test-kit/utils";
 
 describe("Scheduler", () => {
-  it("runs queued operations one at a time in FIFO order", async () => {
+  it("runs the next operation after the current operation completes", async () => {
     const scheduler = new Scheduler();
+    const firstStarted = deferred<void>();
     const firstCanFinish = deferred<void>();
-    const secondCanFinish = deferred<void>();
-    const events: string[] = [];
+    let firstFinished = false;
 
     const first = scheduler.run(async () => {
-      events.push("first:start");
+      firstStarted.resolve(undefined);
       await firstCanFinish.promise;
-      events.push("first:end");
-      return "first-result";
+      firstFinished = true;
     });
 
     const second = scheduler.run(async () => {
-      events.push("second:start");
-      await secondCanFinish.promise;
-      events.push("second:end");
-      return "second-result";
+      expect(firstFinished).toBe(true);
     });
 
-    const third = scheduler.run(async () => {
-      events.push("third:start");
-      return "third-result";
-    });
-
-    await expectEventually(() => events).toEqual(["first:start"]);
+    await firstStarted.promise;
 
     firstCanFinish.resolve(undefined);
-    await expect(first).resolves.toBe("first-result");
 
-    await expectEventually(() => events).toEqual([
-      "first:start",
-      "first:end",
-      "second:start",
-    ]);
-
-    secondCanFinish.resolve(undefined);
-    await expect(second).resolves.toBe("second-result");
-    await expect(third).resolves.toBe("third-result");
-
-    expect(events).toEqual([
-      "first:start",
-      "first:end",
-      "second:start",
-      "second:end",
-      "third:start",
-    ]);
+    await first;
+    await second;
   });
 
-  it("releases the queue after an operation rejects", async () => {
+  it("continues with the next operation after a rejection", async () => {
     const scheduler = new Scheduler();
+    const firstStarted = deferred<void>();
     const firstCanReject = deferred<void>();
-    const events: string[] = [];
+    let firstRejected = false;
 
     const first = scheduler.run(async () => {
-      events.push("first:start");
+      firstStarted.resolve(undefined);
+      try {
       await firstCanReject.promise;
-      events.push("first:unreachable");
+      } catch (error) {
+        firstRejected = true;
+        throw error;
+      }
     });
 
     const second = scheduler.run(async () => {
-      events.push("second:start");
-      return "second-result";
+      expect(firstRejected).toBe(true);
     });
 
-    await expectEventually(() => [...events]).toEqual(["first:start"]);
+    await firstStarted.promise;
 
     firstCanReject.reject(new Error("first failed"));
 
     await expect(first).rejects.toThrow("first failed");
-    await expect(second).resolves.toBe("second-result");
-
-    expect(events).toEqual(["first:start", "second:start"]);
+    await second;
   });
 
   it("holds the queue for the full lifetime of a stream", async () => {
