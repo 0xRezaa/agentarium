@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Scheduler } from "./scheduler";
-import { deferred } from "../../test-kit/utils";
+import { deferred, obtainAsyncIterator } from "../../test-kit/utils";
 
 describe("Scheduler", () => {
   it("runs the next operation after the current operation completes", async () => {
