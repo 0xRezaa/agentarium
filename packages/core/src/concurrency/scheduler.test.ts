@@ -28,15 +28,16 @@ describe("Scheduler", () => {
       return "third-result";
     });
 
-    await flushMicrotasks();
-
-    expect(events).toEqual(["first:start"]);
+    await expect
+      .poll(() => [...events], { interval: 1, timeout: 100 })
+      .toEqual(["first:start"]);
 
     firstCanFinish.resolve(undefined);
     await expect(first).resolves.toBe("first-result");
-    await flushMicrotasks();
 
-    expect(events).toEqual(["first:start", "first:end", "second:start"]);
+    await expect
+      .poll(() => [...events], { interval: 1, timeout: 100 })
+      .toEqual(["first:start", "first:end", "second:start"]);
 
     secondCanFinish.resolve(undefined);
     await expect(second).resolves.toBe("second-result");
@@ -67,9 +68,9 @@ describe("Scheduler", () => {
       return "second-result";
     });
 
-    await flushMicrotasks();
-
-    expect(events).toEqual(["first:start"]);
+    await expect
+      .poll(() => [...events], { interval: 1, timeout: 100 })
+      .toEqual(["first:start"]);
 
     firstCanReject.reject(new Error("first failed"));
 
@@ -82,12 +83,14 @@ describe("Scheduler", () => {
   it("holds the queue for the full lifetime of a stream", async () => {
     const scheduler = new Scheduler();
     const streamCanFinish = deferred<void>();
+    const streamIsWaiting = deferred<void>();
     const events: string[] = [];
 
     const stream = scheduler.stream(async function* () {
       events.push("stream:start");
       yield "first-chunk";
       events.push("stream:waiting");
+      streamIsWaiting.resolve(undefined);
       await streamCanFinish.promise;
       events.push("stream:end");
       yield "second-chunk";
@@ -105,12 +108,10 @@ describe("Scheduler", () => {
       return "run-result";
     });
 
-    await flushMicrotasks();
-
     expect(events).toEqual(["stream:start"]);
 
     const pendingNext = iterator.next();
-    await flushMicrotasks();
+    await streamIsWaiting.promise;
 
     expect(events).toEqual(["stream:start", "stream:waiting"]);
 
@@ -161,8 +162,6 @@ describe("Scheduler", () => {
       return "run-result";
     });
 
-    await flushMicrotasks();
-
     expect(events).toEqual(["stream:start"]);
 
     await iterator.return?.(undefined);
@@ -193,8 +192,6 @@ describe("Scheduler", () => {
       events.push("run:start");
       return "run-result";
     });
-
-    await flushMicrotasks();
 
     expect(events).toEqual(["stream:start"]);
 
@@ -230,8 +227,3 @@ describe("Scheduler", () => {
     expect(events).toEqual(["run:start", "stream:start"]);
   });
 });
-
-async function flushMicrotasks(): Promise<void> {
-  await Promise.resolve();
-  await Promise.resolve();
-}
