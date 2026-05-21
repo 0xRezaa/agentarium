@@ -3,6 +3,7 @@ import type {
   ChatCompletionMessageToolCall,
   CompletionUsage,
 } from "@mlc-ai/web-llm";
+import type { Message } from "@0xrezaa/core/model";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import {
   createAssistantMessage,
@@ -17,32 +18,29 @@ import {
   toWebLLMChatRequest,
 } from "./conversation";
 
+const MODEL_ID = "test-model";
+const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
+
 describe("toWebLLMChatRequest", () => {
   it("sets the target model id and disables streaming", () => {
-    const request = toWebLLMChatRequest({ messages: [] }, "test-model");
+    const request = toWebLLMChatRequest({ messages: [] }, MODEL_ID);
 
     expect(request).toEqual({
       messages: [],
       stream: false,
-      model: "test-model",
+      model: MODEL_ID,
     });
   });
 
   it("preserves conversation message order", () => {
-    const toolCallId = "tool-call-1" as ToolCallId;
-    const request = toWebLLMChatRequest(
-      {
-        messages: [
-          createSystemMessage("System."),
-          createUserMessage("User."),
-          createAssistantMessage("Assistant."),
-          createToolResultMessage(toolCallId, "Tool."),
-        ],
-      },
-      "test-model",
+    const messages = toWebLLMMessages(
+      createSystemMessage("System."),
+      createUserMessage("User."),
+      createAssistantMessage("Assistant."),
+      createToolResultMessage(TOOL_CALL_ID, "Tool."),
     );
 
-    expect(request.messages.map((message) => message.role)).toEqual([
+    expect(messages.map((message) => message.role)).toEqual([
       "system",
       "user",
       "assistant",
@@ -51,85 +49,42 @@ describe("toWebLLMChatRequest", () => {
   });
 
   it("joins system and user text parts in order", () => {
-    const request = toWebLLMChatRequest(
-      {
-        messages: [
-          createSystemMessage("You are ", "brief."),
-          createUserMessage("Say ", "hello."),
-        ],
-      },
-      "test-model",
+    const messages = toWebLLMMessages(
+      createSystemMessage("You are ", "brief."),
+      createUserMessage("Say ", "hello."),
     );
 
-    expect(request.messages).toEqual([
+    expect(messages).toEqual([
       { role: "system", content: "You are brief." },
       { role: "user", content: "Say hello." },
     ]);
   });
 
   it("maps only assistant text content for now", () => {
-    const toolCallId = "tool-call-1" as ToolCallId;
-    const request = toWebLLMChatRequest(
-      {
-        messages: [
-          {
-            role: "assistant",
-            content: [
-              { type: "text", text: "I need a tool." },
-              {
-                type: "tool-call",
-                toolCallId,
-                toolName: "readFile",
-                input: { path: "src/index.ts" },
-              },
-            ],
-          },
-        ],
-      },
-      "test-model",
+    const messages = toWebLLMMessages(
+      createAssistantMessageWithToolCall("I need a tool."),
     );
 
-    expect(request.messages).toEqual([
+    expect(messages).toEqual([
       { role: "assistant", content: "I need a tool." },
     ]);
   });
 
   it("maps an assistant message with no text content to null content", () => {
-    const request = toWebLLMChatRequest(
-      {
-        messages: [
-          {
-            role: "assistant",
-            content: [
-              {
-                type: "tool-call",
-                toolCallId: "tool-call-1" as ToolCallId,
-                toolName: "readFile",
-                input: { path: "src/index.ts" },
-              },
-            ],
-          },
-        ],
-      },
-      "test-model",
-    );
+    const messages = toWebLLMMessages(createAssistantMessageWithToolCall());
 
-    expect(request.messages).toEqual([{ role: "assistant", content: null }]);
+    expect(messages).toEqual([{ role: "assistant", content: null }]);
   });
 
   it("maps tool result messages to WebLLM tool messages", () => {
-    const toolCallId = "tool-call-1" as ToolCallId;
-    const request = toWebLLMChatRequest(
-      {
-        messages: [createToolResultMessage(toolCallId, { ok: true })],
-      },
-      "test-model",
+    const messages = toWebLLMMessages(
+      createToolResultMessage(TOOL_CALL_ID, { ok: true }),
     );
 
-    expect(request.messages).toEqual([
+    expect(messages).toEqual([
       {
         role: "tool",
-        tool_call_id: toolCallId,
+        tool_call_id: TOOL_CALL_ID,
         content: '{"ok":true}',
       },
     ]);
@@ -140,8 +95,8 @@ describe("fromWebLLMChatCompletion", () => {
   it("uses the first choice by default instead of combining alternatives", () => {
     const response = fromWebLLMChatCompletion(
       createChatCompletion([
-        createChoice(0, "First answer."),
-        createChoice(1, "Second answer."),
+        createChoice("First answer."),
+        createChoice("Second answer.", { index: 1 }),
       ]),
     );
 
@@ -153,8 +108,8 @@ describe("fromWebLLMChatCompletion", () => {
   it("allows callers to provide a choice selection strategy", () => {
     const response = fromWebLLMChatCompletion(
       createChatCompletion([
-        createChoice(0, "First answer."),
-        createChoice(1, "Second answer."),
+        createChoice("First answer."),
+        createChoice("Second answer.", { index: 1 }),
       ]),
       (choices) => choices[1] ?? selectFirstWebLLMChoice(choices),
     );
@@ -172,7 +127,7 @@ describe("fromWebLLMChatCompletion", () => {
 
   it("maps assistant text content to a core text part", () => {
     const response = fromWebLLMChatCompletion(
-      createChatCompletion([createChoice(0, "Answer.")]),
+      createChatCompletion([createChoice("Answer.")]),
     );
 
     expect(response.message).toEqual({
@@ -183,7 +138,7 @@ describe("fromWebLLMChatCompletion", () => {
 
   it("maps null assistant content to an empty assistant content array", () => {
     const response = fromWebLLMChatCompletion(
-      createChatCompletion([createChoice(0, null)]),
+      createChatCompletion([createChoice(null)]),
     );
 
     expect(response.message).toEqual({
@@ -195,9 +150,11 @@ describe("fromWebLLMChatCompletion", () => {
   it("maps WebLLM tool calls to core tool-call parts", () => {
     const response = fromWebLLMChatCompletion(
       createChatCompletion([
-        createChoice(0, "I need to inspect the file.", [
-          createToolCall("tool-call-1", "readFile", '{"path":"src/index.ts"}'),
-        ]),
+        createChoice("I need to inspect the file.", {
+          toolCalls: [
+            createToolCall(TOOL_CALL_ID, "readFile", '{"path":"src/index.ts"}'),
+          ],
+        }),
       ]),
     );
 
@@ -205,7 +162,7 @@ describe("fromWebLLMChatCompletion", () => {
       { type: "text", text: "I need to inspect the file." },
       {
         type: "tool-call",
-        toolCallId: "tool-call-1",
+        toolCallId: TOOL_CALL_ID,
         toolName: "readFile",
         input: '{"path":"src/index.ts"}',
       },
@@ -214,18 +171,7 @@ describe("fromWebLLMChatCompletion", () => {
 
   it("maps usage when WebLLM reports token counts", () => {
     const response = fromWebLLMChatCompletion(
-      createChatCompletion([createChoice(0, "Answer.")], {
-        prompt_tokens: 3,
-        completion_tokens: 2,
-        total_tokens: 5,
-        extra: {
-          e2e_latency_s: 1,
-          prefill_tokens_per_s: 2,
-          decode_tokens_per_s: 3,
-          time_to_first_token_s: 4,
-          time_per_output_token_s: 5,
-        },
-      }),
+      createChatCompletion([createChoice("Answer.")], createUsage(3, 2, 5)),
     );
 
     expect(response.usage).toEqual({
@@ -238,12 +184,31 @@ describe("fromWebLLMChatCompletion", () => {
 
   it("omits usage when WebLLM does not report token counts", () => {
     const response = fromWebLLMChatCompletion(
-      createChatCompletion([createChoice(0, "Answer.")]),
+      createChatCompletion([createChoice("Answer.")]),
     );
 
     expect("usage" in response).toBe(false);
   });
 });
+
+function toWebLLMMessages(...messages: Message[]) {
+  return toWebLLMChatRequest({ messages }, MODEL_ID).messages;
+}
+
+function createAssistantMessageWithToolCall(text?: string): Message {
+  return {
+    role: "assistant",
+    content: [
+      ...(text ? [{ type: "text" as const, text }] : []),
+      {
+        type: "tool-call",
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        input: { path: "src/index.ts" },
+      },
+    ],
+  };
+}
 
 function createChatCompletion(
   choices: ChatCompletion.Choice[],
@@ -252,7 +217,7 @@ function createChatCompletion(
   return {
     id: "chat-completion-test",
     choices,
-    model: "test-model",
+    model: MODEL_ID,
     object: "chat.completion",
     created: 0,
     ...(usage ? { usage } : {}),
@@ -260,24 +225,26 @@ function createChatCompletion(
 }
 
 function createChoice(
-  index: number,
   content: string | null,
-  toolCalls?: Array<ChatCompletionMessageToolCall>,
+  options: {
+    index?: number;
+    toolCalls?: ChatCompletionMessageToolCall[];
+  } = {},
 ): ChatCompletion.Choice {
   return {
     finish_reason: "stop",
-    index,
+    index: options.index ?? 0,
     logprobs: null,
     message: {
       role: "assistant",
       content,
-      ...(toolCalls ? { tool_calls: toolCalls } : {}),
+      ...(options.toolCalls ? { tool_calls: options.toolCalls } : {}),
     },
   };
 }
 
 function createToolCall(
-  id: string,
+  id: ToolCallId,
   name: string,
   args: string,
 ): ChatCompletionMessageToolCall {
@@ -287,6 +254,25 @@ function createToolCall(
     function: {
       name,
       arguments: args,
+    },
+  };
+}
+
+function createUsage(
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number,
+): CompletionUsage {
+  return {
+    prompt_tokens,
+    completion_tokens,
+    total_tokens,
+    extra: {
+      e2e_latency_s: 1,
+      prefill_tokens_per_s: 2,
+      decode_tokens_per_s: 3,
+      time_to_first_token_s: 4,
+      time_per_output_token_s: 5,
     },
   };
 }
