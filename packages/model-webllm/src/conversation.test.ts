@@ -41,41 +41,23 @@ describe("toWebLLMChatRequest", () => {
     });
   });
 
-  it("preserves conversation message order", () => {
-    const messages = toWebLLMMessages(
-      createSystemMessage("System."),
-      createUserMessage("User."),
-      createAssistantMessage("Assistant."),
-      createToolResultMessage(TOOL_CALL_ID, "Tool."),
-    );
-
-    expect(messages.map((message) => message.role)).toEqual([
-      "system",
-      "user",
-      "assistant",
-      "tool",
-    ]);
-  });
-
-  it("joins system and user text parts in order", () => {
+  it("maps supported core messages to WebLLM messages in order", () => {
     const messages = toWebLLMMessages(
       createSystemMessage("You are ", "brief."),
       createUserMessage("Say ", "hello."),
+      createAssistantMessageWithToolCall("I need a tool."),
+      createToolResultMessage(TOOL_CALL_ID, { ok: true }),
     );
 
     expect(messages).toEqual([
       { role: "system", content: "You are brief." },
       { role: "user", content: "Say hello." },
-    ]);
-  });
-
-  it("maps only assistant text content for now", () => {
-    const messages = toWebLLMMessages(
-      createAssistantMessageWithToolCall("I need a tool."),
-    );
-
-    expect(messages).toEqual([
       { role: "assistant", content: "I need a tool." },
+      {
+        role: "tool",
+        tool_call_id: TOOL_CALL_ID,
+        content: '{"ok":true}',
+      },
     ]);
   });
 
