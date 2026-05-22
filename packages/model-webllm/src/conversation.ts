@@ -64,6 +64,9 @@ function toWebLLMChatRequestBase(
   return {
     messages: toWebLLMMessages(request.messages),
     model: modelId,
+    stream_options: {
+      include_usage: true,
+    },
   };
 }
 
