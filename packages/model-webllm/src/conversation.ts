@@ -1,14 +1,21 @@
+import type {
+  ModelTextDeltaEvent,
+  ModelToolCallDeltaEvent,
+} from "#core/model/events/delta";
 import {
   stringifyToolResult,
+  type AssistantContent,
   type AssistantMessage,
   type Message,
   type ModelRequest,
   type ModelResponse,
+  type ModelResponseStream,
   type ModelUsage,
 } from "@0xrezaa/core/model";
-import type { ToolCallId } from "@0xrezaa/core/tool";
+import { createToolCallId, type ToolCallId } from "@0xrezaa/core/tool";
 import type {
   ChatCompletion,
+  ChatCompletionChunk,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionRequestBase,
@@ -140,3 +147,10 @@ export function fromWebLLMChatCompletion(
     ...(usage ? { usage: fromWebLLMCompletionUsage(usage) } : {}),
   };
 }
+
+function getWebLLMStreamingToolCallId(
+  toolCall: ChatCompletionChunk.Choice.Delta.ToolCall,
+): ToolCallId {
+  return (toolCall.id as ToolCallId) ?? createToolCallId();
+}
+
