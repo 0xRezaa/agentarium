@@ -8,7 +8,12 @@ import type {
 import type { Initializable } from "@0xrezaa/core/lifecycle";
 import type { WebLLMRuntime } from "./runtime";
 import type { WebLLMModelMap } from "./types";
-import { fromWebLLMChatCompletion, toWebLLMChatRequestNonStreaming } from "./conversation";
+import {
+  fromWebLLMChatCompletion,
+  fromWebLLMChatCompletionIterable,
+  toWebLLMChatRequestNonStreaming,
+  toWebLLMChatRequestStreaming,
+} from "./conversation";
 
 export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   implements ModelAdapter, Initializable
@@ -31,8 +36,15 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
       return fromWebLLMChatCompletion(chatCompletion);
     });
   }
-  async *stream(_request: ModelRequest): AsyncIterable<ModelStreamEvent> {
-    // Implementation for streaming responses from the WebLLM model
-    throw new Error("Not implemented yet");
+  async *stream(request: ModelRequest): AsyncIterable<ModelStreamEvent> {
+    yield* this.runtime.streamWithModel(
+      this.modelKey,
+      async function* (engine, modelId) {
+        const webLLMRequest = toWebLLMChatRequestStreaming(request, modelId);
+        const chatCompletion =
+          await engine.chat.completions.create(webLLMRequest);
+        yield* fromWebLLMChatCompletionIterable(chatCompletion);
+      },
+    );
   }
 }
