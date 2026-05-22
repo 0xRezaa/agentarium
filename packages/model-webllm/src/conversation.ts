@@ -154,3 +154,102 @@ function getWebLLMStreamingToolCallId(
   return (toolCall.id as ToolCallId) ?? createToolCallId();
 }
 
+interface ToolCallPayload {
+  toolCallId: ToolCallId;
+  input: string;
+  toolName?: string;
+}
+
+export async function* fromWebLLMChatCompletionIterable(
+  completionIterable: AsyncIterable<ChatCompletionChunk>,
+): ModelResponseStream {
+  let finalResponseText = "";
+  let finishedWithToolCalls = false;
+  let usage: ModelUsage | undefined;
+  const toolCalls = new Map<number, ToolCallPayload>();
+
+  for await (const chunk of completionIterable) {
+    if (chunk.usage) {
+      if (usage) {
+        throw new Error("WebLLM returned multiple usage chunks.");
+      }
+      usage = fromWebLLMCompletionUsage(chunk.usage);
+    }
+
+    const [choice] = chunk.choices;
+    if (!choice) {
+      continue;
+    }
+
+    if (choice.finish_reason === "tool_calls") {
+      finishedWithToolCalls = true;
+    }
+
+    const { content, tool_calls } = choice.delta;
+    if (content) {
+      finalResponseText += content;
+      yield {
+        type: "model:text-delta",
+        delta: content,
+      } satisfies ModelTextDeltaEvent;
+    }
+    if (!tool_calls) continue;
+    for (const toolCall of tool_calls) {
+      const state: ToolCallPayload = toolCalls.get(toolCall.index) ?? {
+        toolCallId: getWebLLMStreamingToolCallId(toolCall),
+        input: "",
+      };
+
+      const toolName = toolCall.function?.name;
+      if (toolName) {
+        state.toolName = toolName;
+      }
+
+      const inputDelta = toolCall.function?.arguments;
+      if (inputDelta) {
+        state.input += inputDelta;
+      }
+
+      toolCalls.set(toolCall.index, state);
+
+      yield {
+        type: "model:tool-call-delta",
+        toolCallId: state.toolCallId,
+        ...(toolName ? { toolName } : {}),
+        ...(inputDelta ? { inputDelta } : {}),
+      } satisfies ModelToolCallDeltaEvent;
+    }
+  }
+
+  const content: AssistantContent = [
+    ...(finalResponseText && !finishedWithToolCalls
+      ? [{ type: "text" as const, text: finalResponseText }]
+      : []),
+    ...Array.from(toolCalls.entries())
+      .sort(([leftIndex], [rightIndex]) => leftIndex - rightIndex)
+      .map(([, toolCall]) => {
+        if (!toolCall.toolName) {
+          throw new Error("WebLLM returned a tool call without a tool name.");
+        }
+
+        return {
+          type: "tool-call" as const,
+          toolCallId: toolCall.toolCallId,
+          toolName: toolCall.toolName,
+          input: toolCall.input,
+        };
+      }),
+  ];
+
+  yield {
+    type: "model:response",
+    content,
+  };
+
+  if (usage) {
+    yield {
+      type: "model:usage",
+      usage,
+    };
+  }
+}
