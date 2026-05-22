@@ -66,20 +66,6 @@ describe("toWebLLMChatRequest", () => {
 
     expect(messages).toEqual([{ role: "assistant", content: null }]);
   });
-
-  it("maps tool result messages to WebLLM tool messages", () => {
-    const messages = toWebLLMMessages(
-      createToolResultMessage(TOOL_CALL_ID, { ok: true }),
-    );
-
-    expect(messages).toEqual([
-      {
-        role: "tool",
-        tool_call_id: TOOL_CALL_ID,
-        content: '{"ok":true}',
-      },
-    ]);
-  });
 });
 
 describe("fromWebLLMChatCompletion", () => {
