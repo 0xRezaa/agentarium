@@ -6,7 +6,6 @@ import type {
 import type { Message } from "@0xrezaa/core/model";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import {
-  createAssistantMessage,
   createSystemMessage,
   createToolResultMessage,
   createUserMessage,
@@ -23,22 +22,21 @@ const MODEL_ID = "test-model";
 const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
 
 describe("toWebLLMChatRequest", () => {
-  it("sets the target model id and disables streaming", () => {
-    const request = toWebLLMChatRequestNonStreaming({ messages: [] }, MODEL_ID);
-
-    expect(request).toEqual({
-      messages: [],
+  it.each([
+    {
+      convert: toWebLLMChatRequestNonStreaming,
       stream: false,
-      model: MODEL_ID,
-    });
-  });
-
-  it("sets the target model id and enables streaming", () => {
-    const request = toWebLLMChatRequestStreaming({ messages: [] }, MODEL_ID);
+    },
+    {
+      convert: toWebLLMChatRequestStreaming,
+      stream: true,
+    },
+  ])("sets the target model id and stream", ({ convert, stream }) => {
+    const request = convert({ messages: [] }, MODEL_ID);
 
     expect(request).toEqual({
       messages: [],
-      stream: true,
+      stream,
       model: MODEL_ID,
     });
   });
