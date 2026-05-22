@@ -16,6 +16,7 @@ import {
   fromWebLLMChatCompletion,
   selectFirstWebLLMChoice,
   toWebLLMChatRequestNonStreaming,
+  toWebLLMChatRequestStreaming,
 } from "./conversation";
 
 const MODEL_ID = "test-model";
@@ -28,6 +29,16 @@ describe("toWebLLMChatRequest", () => {
     expect(request).toEqual({
       messages: [],
       stream: false,
+      model: MODEL_ID,
+    });
+  });
+
+  it("sets the target model id and enables streaming", () => {
+    const request = toWebLLMChatRequestStreaming({ messages: [] }, MODEL_ID);
+
+    expect(request).toEqual({
+      messages: [],
+      stream: true,
       model: MODEL_ID,
     });
   });
