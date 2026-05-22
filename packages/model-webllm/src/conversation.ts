@@ -11,7 +11,9 @@ import type {
   ChatCompletion,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
+  ChatCompletionRequestBase,
   ChatCompletionRequestNonStreaming,
+  ChatCompletionRequestStreaming,
   CompletionUsage,
 } from "@mlc-ai/web-llm";
 
@@ -55,14 +57,33 @@ function toWebLLMMessages(messages: Message[]): ChatCompletionMessageParam[] {
   });
 }
 
+function toWebLLMChatRequestBase(
+  request: ModelRequest,
+  modelId: string,
+): ChatCompletionRequestBase {
+  return {
+    messages: toWebLLMMessages(request.messages),
+    model: modelId,
+  };
+}
+
 export function toWebLLMChatRequestNonStreaming(
   request: ModelRequest,
   modelId: string,
 ): ChatCompletionRequestNonStreaming {
   return {
-    messages: toWebLLMMessages(request.messages),
+    ...toWebLLMChatRequestBase(request, modelId),
     stream: false,
-    model: modelId,
+  };
+}
+
+export function toWebLLMChatRequestStreaming(
+  request: ModelRequest,
+  modelId: string,
+): ChatCompletionRequestStreaming {
+  return {
+    ...toWebLLMChatRequestBase(request, modelId),
+    stream: true,
   };
 }
 
