@@ -15,7 +15,7 @@ import { describe, expect, it } from "vitest";
 import {
   fromWebLLMChatCompletion,
   selectFirstWebLLMChoice,
-  toWebLLMChatRequest,
+  toWebLLMChatRequestNonStreaming,
 } from "./conversation";
 
 const MODEL_ID = "test-model";
@@ -23,7 +23,7 @@ const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
 
 describe("toWebLLMChatRequest", () => {
   it("sets the target model id and disables streaming", () => {
-    const request = toWebLLMChatRequest({ messages: [] }, MODEL_ID);
+    const request = toWebLLMChatRequestNonStreaming({ messages: [] }, MODEL_ID);
 
     expect(request).toEqual({
       messages: [],
@@ -192,7 +192,7 @@ describe("fromWebLLMChatCompletion", () => {
 });
 
 function toWebLLMMessages(...messages: Message[]) {
-  return toWebLLMChatRequest({ messages }, MODEL_ID).messages;
+  return toWebLLMChatRequestNonStreaming({ messages }, MODEL_ID).messages;
 }
 
 function createAssistantMessageWithToolCall(text?: string): Message {

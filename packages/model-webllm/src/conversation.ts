@@ -55,7 +55,7 @@ function toWebLLMMessages(messages: Message[]): ChatCompletionMessageParam[] {
   });
 }
 
-export function toWebLLMChatRequest(
+export function toWebLLMChatRequestNonStreaming(
   request: ModelRequest,
   modelId: string,
 ): ChatCompletionRequestNonStreaming {
