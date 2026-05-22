@@ -12,6 +12,8 @@ export interface ModelResponse {
   usage?: ModelUsage;
 }
 
+export type ModelResponseStream = AsyncIterable<ModelStreamEvent>;
+
 export interface ModelAdapter {
   id: ModelAdapterId;
   generate(request: ModelRequest): Promise<ModelResponse>;
@@ -19,5 +21,5 @@ export interface ModelAdapter {
    * Streams model events and must emit exactly one `model:response`
    * event before completing successfully.
    */
-  stream(request: ModelRequest): AsyncIterable<ModelStreamEvent>;
+  stream(request: ModelRequest): ModelResponseStream;
 }
