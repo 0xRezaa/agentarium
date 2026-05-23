@@ -116,15 +116,25 @@ function fromWebLLMChatCompletionMessage(
   };
 }
 
-export function selectFirstWebLLMChoice(
-  choices: readonly ChatCompletion.Choice[],
-): ChatCompletion.Choice {
+function selectFirstWebLLMChoice<T>(choices: readonly T[]) {
   // Chat completion choices are alternative completions from `n`, not parts of one response.
   const [choice] = choices;
   if (!choice) {
     throw new Error("WebLLM returned no completion choices.");
   }
   return choice;
+}
+
+export function selectFirstWebLLMChoiceNonStreaming(
+  choices: readonly ChatCompletion.Choice[],
+): ChatCompletion.Choice {
+  return selectFirstWebLLMChoice(choices);
+}
+
+export function selectFirstWebLLMChoiceStreaming(
+  choices: readonly ChatCompletionChunk.Choice[],
+): ChatCompletionChunk.Choice {
+  return selectFirstWebLLMChoice(choices);
 }
 
 function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
@@ -139,7 +149,7 @@ function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
 
 export function fromWebLLMChatCompletion(
   completion: ChatCompletion,
-  selectChoice: WebLLMChoiceSelector = selectFirstWebLLMChoice,
+  selectChoice: WebLLMChoiceSelector = selectFirstWebLLMChoiceNonStreaming,
 ): ModelResponse {
   const { choices, usage } = completion;
   const choice = selectChoice(choices);
@@ -163,9 +173,9 @@ interface ToolCallPayload {
 
 export async function* fromWebLLMChatCompletionIterable(
   completionIterable: AsyncIterable<ChatCompletionChunk>,
+  selectChoice: WebLLMStreamChoiceSelector = selectFirstWebLLMChoiceStreaming,
 ): ModelResponseStream {
   let finalResponseText = "";
-  let finishedWithToolCalls = false;
   let usage: ModelUsage | undefined;
   const toolCalls = new Map<number, ToolCallPayload>();
 
