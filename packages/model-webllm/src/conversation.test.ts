@@ -1,9 +1,10 @@
 import type {
   ChatCompletion,
+  ChatCompletionChunk,
   ChatCompletionMessageToolCall,
   CompletionUsage,
 } from "@mlc-ai/web-llm";
-import type { Message } from "@0xrezaa/core/model";
+import type { Message, ModelStreamEvent } from "@0xrezaa/core/model";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import {
   createSystemMessage,
@@ -13,7 +14,8 @@ import {
 import { describe, expect, it } from "vitest";
 import {
   fromWebLLMChatCompletion,
-  selectFirstWebLLMChoice,
+  fromWebLLMChatCompletionIterable,
+  selectFirstWebLLMChoiceNonStreaming,
   toWebLLMChatRequestNonStreaming,
   toWebLLMChatRequestStreaming,
 } from "./conversation";
@@ -25,21 +27,27 @@ describe("toWebLLMChatRequest", () => {
   it.each([
     {
       convert: toWebLLMChatRequestNonStreaming,
+      expectedOptions: {},
       stream: false,
     },
     {
       convert: toWebLLMChatRequestStreaming,
+      expectedOptions: { stream_options: { include_usage: true } },
       stream: true,
     },
-  ])("sets the target model id and stream", ({ convert, stream }) => {
+  ])(
+    "sets the target model id and stream",
+    ({ convert, expectedOptions, stream }) => {
     const request = convert({ messages: [] }, MODEL_ID);
 
     expect(request).toEqual({
       messages: [],
       stream,
       model: MODEL_ID,
+        ...expectedOptions,
     });
-  });
+    },
+  );
 
   it("maps supported core messages to WebLLM messages in order", () => {
     const messages = toWebLLMMessages(
@@ -88,7 +96,7 @@ describe("fromWebLLMChatCompletion", () => {
         createChoice("First answer."),
         createChoice("Second answer.", { index: 1 }),
       ]),
-      (choices) => choices[1] ?? selectFirstWebLLMChoice(choices),
+      (choices) => choices[1] ?? selectFirstWebLLMChoiceNonStreaming(choices),
     );
 
     expect(response.message.content).toEqual([
@@ -201,6 +209,20 @@ function createChatCompletion(
   };
 }
 
+function createChatCompletionChunk(
+  choices: ChatCompletionChunk.Choice[],
+  usage?: CompletionUsage,
+): ChatCompletionChunk {
+  return {
+    id: "chat-completion-chunk-test",
+    choices,
+    model: MODEL_ID,
+    object: "chat.completion.chunk",
+    created: 0,
+    ...(usage ? { usage } : {}),
+  };
+}
+
 function createChoice(
   content: string | null,
   options: {
@@ -220,6 +242,24 @@ function createChoice(
   };
 }
 
+function createChunkChoice(
+  options: {
+    content?: string | null;
+    finishReason?: ChatCompletionChunk.Choice["finish_reason"];
+    index?: number;
+    toolCalls?: ChatCompletionChunk.Choice.Delta.ToolCall[];
+  } = {},
+): ChatCompletionChunk.Choice {
+  return {
+    delta: {
+      ...(options.content === undefined ? {} : { content: options.content }),
+      ...(options.toolCalls ? { tool_calls: options.toolCalls } : {}),
+    },
+    finish_reason: options.finishReason ?? null,
+    index: options.index ?? 0,
+  };
+}
+
 function createToolCall(
   id: ToolCallId,
   name: string,
@@ -227,6 +267,22 @@ function createToolCall(
 ): ChatCompletionMessageToolCall {
   return {
     id,
+    type: "function",
+    function: {
+      name,
+      arguments: args,
+    },
+  };
+}
+
+function createStreamingToolCall(
+  id: ToolCallId,
+  name: string,
+  args: string,
+): ChatCompletionChunk.Choice.Delta.ToolCall {
+  return {
+    id,
+    index: 0,
     type: "function",
     function: {
       name,
@@ -252,4 +308,18 @@ function createUsage(
       time_per_output_token_s: 5,
     },
   };
+}
+
+async function collectStreamEvents(
+  events: AsyncIterable<ModelStreamEvent>,
+): Promise<ModelStreamEvent[]> {
+  const collectedEvents: ModelStreamEvent[] = [];
+  for await (const event of events) {
+    collectedEvents.push(event);
+  }
+  return collectedEvents;
+}
+
+async function* toAsyncIterable<T>(items: T[]): AsyncIterable<T> {
+  yield* items;
 }
