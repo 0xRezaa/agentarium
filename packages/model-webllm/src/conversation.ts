@@ -11,6 +11,7 @@ import {
   type ModelResponse,
   type ModelResponseStream,
   type ModelUsage,
+  type ToolCallPart,
 } from "@0xrezaa/core/model";
 import { createToolCallId, type ToolCallId } from "@0xrezaa/core/tool";
 import type {
@@ -221,25 +222,25 @@ export async function* fromWebLLMChatCompletionIterable(
     }
   }
 
-  const content: AssistantContent = [
-    ...(finalResponseText && !finishedWithToolCalls
-      ? [{ type: "text" as const, text: finalResponseText }]
-      : []),
-    ...Array.from(toolCalls.entries())
-      .sort(([leftIndex], [rightIndex]) => leftIndex - rightIndex)
-      .map(([, toolCall]) => {
-        if (!toolCall.toolName) {
-          throw new Error("WebLLM returned a tool call without a tool name.");
-        }
+  const toolCallParts: ToolCallPart[] = Array.from(toolCalls.entries())
+    .sort(([leftIndex], [rightIndex]) => leftIndex - rightIndex)
+    .map(([, toolCall]) => {
+      if (!toolCall.toolName) {
+        throw new Error("WebLLM returned a tool call without a tool name.");
+      }
 
-        return {
-          type: "tool-call" as const,
-          toolCallId: toolCall.toolCallId,
-          toolName: toolCall.toolName,
-          input: toolCall.input,
-        };
-      }),
-  ];
+      return {
+        type: "tool-call" as const,
+        toolCallId: toolCall.toolCallId,
+        toolName: toolCall.toolName,
+        input: toolCall.input,
+      };
+    });
+
+  const content: AssistantContent =
+    finishedWithToolCalls || !finalResponseText
+      ? toolCallParts
+      : [{ type: "text" as const, text: finalResponseText }, ...toolCallParts];
 
   yield {
     type: "model:response",
