@@ -122,7 +122,9 @@ function fromWebLLMChatCompletionMessage(
   };
 }
 
-function selectFirstWebLLMChoice<T>(choices: readonly T[]) {
+export function selectFirstWebLLMChoiceNonStreaming(
+  choices: readonly ChatCompletion.Choice[],
+): ChatCompletion.Choice {
   // Chat completion choices are alternative completions from `n`, not parts of one response.
   const [choice] = choices;
   if (!choice) {
@@ -131,16 +133,14 @@ function selectFirstWebLLMChoice<T>(choices: readonly T[]) {
   return choice;
 }
 
-export function selectFirstWebLLMChoiceNonStreaming(
-  choices: readonly ChatCompletion.Choice[],
-): ChatCompletion.Choice {
-  return selectFirstWebLLMChoice(choices);
-}
-
 export function selectFirstWebLLMChoiceStreaming(
   choices: readonly ChatCompletionChunk.Choice[],
 ): ChatCompletionChunk.Choice {
-  return selectFirstWebLLMChoice(choices);
+  const choice = choices.find((choice) => choice.index === 0);
+  if (!choice) {
+    throw new Error("WebLLM returned no completion choices.");
+  }
+  return choice;
 }
 
 function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
