@@ -38,14 +38,14 @@ describe("toWebLLMChatRequest", () => {
   ])(
     "sets the target model id and stream",
     ({ convert, expectedOptions, stream }) => {
-    const request = convert({ messages: [] }, MODEL_ID);
+      const request = convert({ messages: [] }, MODEL_ID);
 
-    expect(request).toEqual({
-      messages: [],
-      stream,
-      model: MODEL_ID,
+      expect(request).toEqual({
+        messages: [],
+        stream,
+        model: MODEL_ID,
         ...expectedOptions,
-    });
+      });
     },
   );
 
@@ -216,6 +216,55 @@ describe("fromWebLLMChatCompletionIterable", () => {
     ]);
   });
 
+  it("keeps text when the selected choice finishes with tool calls", async () => {
+    const events = await collectStreamEvents(
+      fromWebLLMChatCompletionIterable(
+        toAsyncIterable([
+          createChatCompletionChunk([
+            createChunkChoice({ content: "I need to inspect the file." }),
+          ]),
+          createChatCompletionChunk([
+            createChunkChoice({
+              finishReason: "tool_calls",
+              toolCalls: [
+                createStreamingToolCall(
+                  TOOL_CALL_ID,
+                  "readFile",
+                  '{"path":"src/index.ts"}',
+                ),
+              ],
+            }),
+          ]),
+        ]),
+      ),
+    );
+
+    expect(events).toEqual([
+      {
+        type: "model:text-delta",
+        delta: "I need to inspect the file.",
+      },
+      {
+        type: "model:tool-call-delta",
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        inputDelta: '{"path":"src/index.ts"}',
+      },
+      {
+        type: "model:response",
+        content: [
+          { type: "text", text: "I need to inspect the file." },
+          {
+            type: "tool-call",
+            toolCallId: TOOL_CALL_ID,
+            toolName: "readFile",
+            input: '{"path":"src/index.ts"}',
+          },
+        ],
+        finish: { reason: "tool-use", rawReason: "tool_calls" },
+      },
+    ]);
+  });
 });
 
 function toWebLLMMessages(...messages: Message[]) {
