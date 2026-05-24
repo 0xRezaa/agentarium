@@ -268,12 +268,13 @@ function createChatCompletionChunk(
 function createChoice(
   content: string | null,
   options: {
+    finishReason?: ChatCompletion.Choice["finish_reason"];
     index?: number;
     toolCalls?: ChatCompletionMessageToolCall[];
   } = {},
 ): ChatCompletion.Choice {
   return {
-    finish_reason: "stop",
+    finish_reason: options.finishReason ?? "stop",
     index: options.index ?? 0,
     logprobs: null,
     message: {
