@@ -7,6 +7,7 @@ import {
   type AssistantContent,
   type AssistantMessage,
   type Message,
+  type ModelFinish,
   type ModelRequest,
   type ModelResponse,
   type ModelResponseStream,
@@ -17,6 +18,7 @@ import { createToolCallId, type ToolCallId } from "@0xrezaa/core/tool";
 import type {
   ChatCompletion,
   ChatCompletionChunk,
+  ChatCompletionFinishReason,
   ChatCompletionMessage,
   ChatCompletionMessageParam,
   ChatCompletionRequestBase,
@@ -28,6 +30,10 @@ import type {
 export type WebLLMChoiceSelector = (
   choices: readonly ChatCompletion.Choice[],
 ) => ChatCompletion.Choice;
+
+export type WebLLMStreamChoiceSelector = (
+  choices: readonly ChatCompletionChunk.Choice[],
+) => ChatCompletionChunk.Choice;
 
 function toWebLLMMessages(messages: Message[]): ChatCompletionMessageParam[] {
   return messages.map((message) => {
@@ -72,9 +78,6 @@ function toWebLLMChatRequestBase(
   return {
     messages: toWebLLMMessages(request.messages),
     model: modelId,
-    stream_options: {
-      include_usage: true,
-    },
   };
 }
 
@@ -95,6 +98,9 @@ export function toWebLLMChatRequestStreaming(
   return {
     ...toWebLLMChatRequestBase(request, modelId),
     stream: true,
+    stream_options: {
+      include_usage: true,
+    },
   };
 }
 
@@ -147,6 +153,26 @@ function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
   };
 }
 
+export function fromWebLLMFinishReason(
+  rawReason: ChatCompletionFinishReason | null | undefined,
+): ModelFinish {
+  if (!rawReason) return { reason: "unknown" };
+
+  switch (rawReason) {
+    case "stop":
+      return { reason: "complete", rawReason };
+    case "tool_calls":
+      return { reason: "tool-use", rawReason };
+    case "length":
+      return { reason: "incomplete", rawReason };
+    case "abort":
+      return { reason: "cancelled", rawReason };
+    default:
+      rawReason satisfies never;
+      return { reason: "unknown", rawReason };
+  }
+}
+
 export function fromWebLLMChatCompletion(
   completion: ChatCompletion,
   selectChoice: WebLLMChoiceSelector = selectFirstWebLLMChoiceNonStreaming,
@@ -155,6 +181,7 @@ export function fromWebLLMChatCompletion(
   const choice = selectChoice(choices);
   return {
     message: fromWebLLMChatCompletionMessage(choice.message),
+    finish: fromWebLLMFinishReason(choice.finish_reason),
     ...(usage ? { usage: fromWebLLMCompletionUsage(usage) } : {}),
   };
 }
@@ -176,6 +203,7 @@ export async function* fromWebLLMChatCompletionIterable(
   selectChoice: WebLLMStreamChoiceSelector = selectFirstWebLLMChoiceStreaming,
 ): ModelResponseStream {
   let finalResponseText = "";
+  let finish: ModelFinish | undefined;
   let usage: ModelUsage | undefined;
   const toolCalls = new Map<number, ToolCallPayload>();
 
@@ -187,13 +215,19 @@ export async function* fromWebLLMChatCompletionIterable(
       usage = fromWebLLMCompletionUsage(chunk.usage);
     }
 
-    const [choice] = chunk.choices;
+    const choice = selectChoice(chunk.choices);
     if (!choice) {
       continue;
     }
 
-    if (choice.finish_reason === "tool_calls") {
-      finishedWithToolCalls = true;
+    if (choice.finish_reason) {
+      const choiceFinish = fromWebLLMFinishReason(choice.finish_reason);
+      if (finish) {
+        throw new Error(
+          "WebLLM returned multiple finish reasons for the selected choice.",
+        );
+      }
+      finish = choiceFinish;
     }
 
     const { content, tool_calls } = choice.delta;
@@ -247,14 +281,17 @@ export async function* fromWebLLMChatCompletionIterable(
       };
     });
 
-  const content: AssistantContent =
-    finishedWithToolCalls || !finalResponseText
-      ? toolCallParts
-      : [{ type: "text" as const, text: finalResponseText }, ...toolCallParts];
+  const content: AssistantContent = [
+    ...(finalResponseText
+      ? [{ type: "text" as const, text: finalResponseText }]
+      : []),
+    ...toolCallParts,
+  ];
 
   yield {
     type: "model:response",
     content,
+    finish: finish ?? { reason: "unknown" },
   };
 
   if (usage) {

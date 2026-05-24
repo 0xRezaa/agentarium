@@ -154,6 +154,19 @@ describe("fromWebLLMChatCompletion", () => {
     ]);
   });
 
+  it("maps WebLLM finish reasons to core finish metadata", () => {
+    const response = fromWebLLMChatCompletion(
+      createChatCompletion([
+        createChoice("Partial answer.", { finishReason: "length" }),
+      ]),
+    );
+
+    expect(response.finish).toEqual({
+      reason: "incomplete",
+      rawReason: "length",
+    });
+  });
+
   it("maps usage when WebLLM reports token counts", () => {
     const response = fromWebLLMChatCompletion(
       createChatCompletion([createChoice("Answer.")], createUsage(3, 2, 5)),
