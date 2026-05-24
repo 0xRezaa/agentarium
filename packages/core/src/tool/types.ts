@@ -12,6 +12,7 @@ export interface ToolExecutionContext {
 export interface Tool<Input = unknown, Result = unknown> {
   name: string;
   description: string;
+  // TODO: add input schema metadata so tools can be advertised to model providers.
   execute(input: Input, context: ToolExecutionContext): Promise<Result>;
 }
 
