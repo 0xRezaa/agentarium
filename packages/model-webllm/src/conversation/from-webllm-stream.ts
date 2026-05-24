@@ -1,0 +1,147 @@
+import type {
+  ModelTextDeltaEvent,
+  ModelToolCallDeltaEvent,
+} from "#core/model/events/delta";
+import type {
+  AssistantContent,
+  ModelFinish,
+  ModelResponseStream,
+  ModelUsage,
+  ToolCallPart,
+} from "@0xrezaa/core/model";
+import { createToolCallId, type ToolCallId } from "@0xrezaa/core/tool";
+import type { ChatCompletionChunk } from "@mlc-ai/web-llm";
+import {
+  fromWebLLMCompletionUsage,
+  fromWebLLMFinishReason,
+} from "./from-webllm";
+
+export type WebLLMStreamChoiceSelector = (
+  choices: readonly ChatCompletionChunk.Choice[],
+) => ChatCompletionChunk.Choice;
+
+export function selectFirstWebLLMChoiceStreaming(
+  choices: readonly ChatCompletionChunk.Choice[],
+): ChatCompletionChunk.Choice {
+  const choice = choices.find((choice) => choice.index === 0);
+  if (!choice) {
+    throw new Error("WebLLM returned no completion choices.");
+  }
+  return choice;
+}
+
+function getWebLLMStreamingToolCallId(
+  toolCall: ChatCompletionChunk.Choice.Delta.ToolCall,
+): ToolCallId {
+  return (toolCall.id as ToolCallId) ?? createToolCallId();
+}
+
+interface ToolCallPayload {
+  toolCallId: ToolCallId;
+  input: string;
+  toolName?: string;
+}
+
+export async function* fromWebLLMChatCompletionIterable(
+  completionIterable: AsyncIterable<ChatCompletionChunk>,
+  selectChoice: WebLLMStreamChoiceSelector = selectFirstWebLLMChoiceStreaming,
+): ModelResponseStream {
+  let finalResponseText = "";
+  let finish: ModelFinish | undefined;
+  let usage: ModelUsage | undefined;
+  const toolCalls = new Map<number, ToolCallPayload>();
+
+  for await (const chunk of completionIterable) {
+    if (chunk.usage) {
+      if (usage) {
+        throw new Error("WebLLM returned multiple usage chunks.");
+      }
+      usage = fromWebLLMCompletionUsage(chunk.usage);
+    }
+
+    const choice = selectChoice(chunk.choices);
+    if (!choice) {
+      continue;
+    }
+
+    if (choice.finish_reason) {
+      const choiceFinish = fromWebLLMFinishReason(choice.finish_reason);
+      if (finish) {
+        throw new Error(
+          "WebLLM returned multiple finish reasons for the selected choice.",
+        );
+      }
+      finish = choiceFinish;
+    }
+
+    const { content, tool_calls } = choice.delta;
+    if (content) {
+      finalResponseText += content;
+      yield {
+        type: "model:text-delta",
+        delta: content,
+      } satisfies ModelTextDeltaEvent;
+    }
+    if (!tool_calls) continue;
+    for (const toolCall of tool_calls) {
+      const state: ToolCallPayload = toolCalls.get(toolCall.index) ?? {
+        toolCallId: getWebLLMStreamingToolCallId(toolCall),
+        input: "",
+      };
+
+      const toolName = toolCall.function?.name;
+      if (toolName) {
+        state.toolName = toolName;
+      }
+
+      const inputDelta = toolCall.function?.arguments;
+      if (inputDelta) {
+        state.input += inputDelta;
+      }
+
+      toolCalls.set(toolCall.index, state);
+
+      yield {
+        type: "model:tool-call-delta",
+        toolCallId: state.toolCallId,
+        ...(toolName ? { toolName } : {}),
+        ...(inputDelta ? { inputDelta } : {}),
+      } satisfies ModelToolCallDeltaEvent;
+    }
+  }
+
+  const toolCallParts: ToolCallPart[] = Array.from(toolCalls.entries())
+    .sort(([leftIndex], [rightIndex]) => leftIndex - rightIndex)
+    .map(([, toolCall]) => {
+      if (!toolCall.toolName) {
+        throw new Error("WebLLM returned a tool call without a tool name.");
+      }
+
+      return {
+        type: "tool-call" as const,
+        toolCallId: toolCall.toolCallId,
+        toolName: toolCall.toolName,
+        input: toolCall.input,
+      };
+    });
+
+  const content: AssistantContent = [
+    ...(finalResponseText
+      ? [{ type: "text" as const, text: finalResponseText }]
+      : []),
+    ...toolCallParts,
+  ];
+
+  yield {
+    type: "model:response",
+    content,
+    finish: finish ?? { reason: "unknown" },
+  };
+
+  if (usage) {
+    yield {
+      type: "model:usage",
+      usage,
+    };
+  }
+}
