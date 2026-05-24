@@ -12,6 +12,7 @@ describe("collectModelResponse", () => {
       {
         type: "model:response",
         content: [{ type: "text", text: "Hello world" }],
+        finish: { reason: "complete", rawReason: "stop" },
       },
     ];
 
@@ -22,6 +23,7 @@ describe("collectModelResponse", () => {
         role: "assistant",
         content: [{ type: "text", text: "Hello world" }],
       },
+      finish: { reason: "complete", rawReason: "stop" },
     } satisfies ModelResponse);
   });
 
@@ -31,6 +33,7 @@ describe("collectModelResponse", () => {
       {
         type: "model:response",
         content: [{ type: "text", text: "Hello" }],
+        finish: { reason: "complete", rawReason: "stop" },
       },
       {
         type: "model:usage",
@@ -50,12 +53,34 @@ describe("collectModelResponse", () => {
         role: "assistant",
         content: [{ type: "text", text: "Hello" }],
       },
+      finish: { reason: "complete", rawReason: "stop" },
       usage: {
         inputTokens: 10,
         outputTokens: 2,
         totalTokens: 12,
         source: "provider",
       },
+    } satisfies ModelResponse);
+  });
+
+  it("collects finish metadata emitted by the model stream", async () => {
+    const events: ModelStreamEvent[] = [
+      { type: "model:text-delta", delta: "Hello" },
+      {
+        type: "model:response",
+        content: [{ type: "text", text: "Hello" }],
+        finish: { reason: "complete", rawReason: "stop" },
+      },
+    ];
+
+    const response = await collectModelResponse(toAsyncIterable(events));
+
+    expect(response).toEqual({
+      message: {
+        role: "assistant",
+        content: [{ type: "text", text: "Hello" }],
+      },
+      finish: { reason: "complete", rawReason: "stop" },
     } satisfies ModelResponse);
   });
 
@@ -73,6 +98,7 @@ describe("collectModelResponse", () => {
             input: { path: "src/index.ts" },
           },
         ],
+        finish: { reason: "tool-use", rawReason: "tool_calls" },
       },
     ];
 
@@ -91,6 +117,7 @@ describe("collectModelResponse", () => {
           },
         ],
       },
+      finish: { reason: "tool-use", rawReason: "tool_calls" },
     } satisfies ModelResponse);
   });
 
@@ -120,6 +147,7 @@ describe("collectModelResponse", () => {
             input: { path: "src/index.ts" },
           },
         ],
+        finish: { reason: "tool-use", rawReason: "tool_calls" },
       },
     ];
 
@@ -138,6 +166,7 @@ describe("collectModelResponse", () => {
           },
         ],
       },
+      finish: { reason: "tool-use", rawReason: "tool_calls" },
     } satisfies ModelResponse);
   });
 
@@ -146,10 +175,12 @@ describe("collectModelResponse", () => {
       {
         type: "model:response",
         content: [{ type: "text", text: "Draft" }],
+        finish: { reason: "complete", rawReason: "stop" },
       },
       {
         type: "model:response",
         content: [{ type: "text", text: "Final" }],
+        finish: { reason: "complete", rawReason: "stop" },
       },
     ];
 

@@ -9,6 +9,7 @@ const mockModelStreamEvents: ModelStreamEvent[] = [
   {
     type: "model:response",
     content: [{ type: "text", text: "Hello world" }],
+    finish: { reason: "complete" },
   },
 ];
 

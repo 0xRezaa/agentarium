@@ -39,5 +39,6 @@ const mockToolCallModelStreamEvents: ModelStreamEvent[] = [
         input: { path: "src/index.ts" },
       },
     ],
+    finish: { reason: "tool-use" },
   },
 ];

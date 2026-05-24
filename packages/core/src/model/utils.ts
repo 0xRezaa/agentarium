@@ -34,6 +34,7 @@ export async function collectModelResponse(
       role: "assistant",
       content: responseEvent.content,
     },
+    finish: responseEvent.finish,
     ...(usageEvent ? { usage: usageEvent.usage } : {}),
   };
 }

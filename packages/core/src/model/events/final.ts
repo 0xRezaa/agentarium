@@ -1,3 +1,4 @@
+import type { ModelFinish } from "#core/model/finish/types";
 import type { ModelUsage } from "#core/model/usage/types";
 import type { AssistantContent } from "../messages/types";
 
@@ -5,6 +6,7 @@ import type { AssistantContent } from "../messages/types";
 export interface ModelResponseEvent {
   type: "model:response";
   content: AssistantContent;
+  finish: ModelFinish;
 }
 
 /** Token/accounting metadata reported or estimated for one model invocation. */
