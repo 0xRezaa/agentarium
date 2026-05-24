@@ -189,6 +189,35 @@ describe("fromWebLLMChatCompletion", () => {
   });
 });
 
+describe("fromWebLLMChatCompletionIterable", () => {
+  it("streams only the choice of index=0 by default", async () => {
+    const events = await collectStreamEvents(
+      fromWebLLMChatCompletionIterable(
+        toAsyncIterable([
+          createChatCompletionChunk([
+            createChunkChoice({ content: "Ignored.", index: 1 }),
+            createChunkChoice({ content: "Selected.", index: 0 }),
+          ]),
+          createChatCompletionChunk([
+            createChunkChoice({ finishReason: "stop", index: 1 }),
+            createChunkChoice({ finishReason: "stop", index: 0 }),
+          ]),
+        ]),
+      ),
+    );
+
+    expect(events).toEqual([
+      { type: "model:text-delta", delta: "Selected." },
+      {
+        type: "model:response",
+        content: [{ type: "text", text: "Selected." }],
+        finish: { reason: "complete", rawReason: "stop" },
+      },
+    ]);
+  });
+
+});
+
 function toWebLLMMessages(...messages: Message[]) {
   return toWebLLMChatRequestNonStreaming({ messages }, MODEL_ID).messages;
 }
