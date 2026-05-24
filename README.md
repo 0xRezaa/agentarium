@@ -1,5 +1,3 @@
-
-
 # Agentarium
 
 Browser-native demos for examinable AI agent systems.
