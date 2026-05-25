@@ -6,7 +6,7 @@ import type {
   ModelStreamEvent,
 } from "@0xrezaa/core/model";
 import type { Initializable } from "@0xrezaa/core/lifecycle";
-import type { WebLLMRuntime } from "./runtime";
+import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime";
 import type { WebLLMModelMap } from "./types";
 import {
   fromWebLLMChatCompletion,
@@ -14,6 +14,20 @@ import {
   toWebLLMChatRequestNonStreaming,
   toWebLLMChatRequestStreaming,
 } from "./conversation";
+
+export interface WebLLMAdapterConfig<
+  TModels extends WebLLMModelMap<TModels>,
+> extends WebLLMRuntimeConfig<TModels> {
+  modelKey: keyof TModels;
+}
+
+export function createWebLLMAdapter<
+  const TModels extends WebLLMModelMap<TModels>,
+>(config: WebLLMAdapterConfig<TModels>): WebLLMAdapter<TModels> {
+  const { modelKey, ...runtimeConfig } = config;
+  const runtime = new WebLLMRuntime(runtimeConfig);
+  return new WebLLMAdapter(runtime, modelKey);
+}
 
 export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   implements ModelAdapter, Initializable
