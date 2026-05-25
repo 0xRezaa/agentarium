@@ -12,9 +12,9 @@ const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
 
 describe("model message factories", () => {
   it("creates system messages from text parts", () => {
-    const content = [createTextPart("Be concise.")];
+    const content = [createTextPart({ text: "Be concise." })];
 
-    const message = createSystemMessage(content);
+    const message = createSystemMessage({ content });
 
     expect(message).toEqual({
       role: "system",
@@ -24,9 +24,12 @@ describe("model message factories", () => {
   });
 
   it("creates user messages from text parts", () => {
-    const content = [createTextPart("Say "), createTextPart("hello.")];
+    const content = [
+      createTextPart({ text: "Say " }),
+      createTextPart({ text: "hello." }),
+    ];
 
-    const message = createUserMessage(content);
+    const message = createUserMessage({ content });
 
     expect(message).toEqual({
       role: "user",
@@ -36,18 +39,26 @@ describe("model message factories", () => {
   });
 
   it("creates assistant messages from content parts", () => {
-    expect(createAssistantMessage([createTextPart("Answer.")])).toEqual({
+    expect(
+      createAssistantMessage({
+        content: [createTextPart({ text: "Answer." })],
+      }),
+    ).toEqual({
       role: "assistant",
       content: [{ type: "text", text: "Answer." }],
     });
 
     expect(
-      createAssistantMessage([
-        createTextPart("I need a tool."),
-        createToolCallPart(TOOL_CALL_ID, "readFile", {
-          path: "src/index.ts",
-        }),
-      ]),
+      createAssistantMessage({
+        content: [
+          createTextPart({ text: "I need a tool." }),
+          createToolCallPart({
+            toolCallId: TOOL_CALL_ID,
+            toolName: "readFile",
+            input: { path: "src/index.ts" },
+          }),
+        ],
+      }),
     ).toEqual({
       role: "assistant",
       content: [
@@ -63,7 +74,7 @@ describe("model message factories", () => {
   });
 
   it("creates empty assistant messages", () => {
-    expect(createAssistantMessage()).toEqual({
+    expect(createAssistantMessage({ content: [] })).toEqual({
       role: "assistant",
       content: [],
     });
@@ -71,7 +82,11 @@ describe("model message factories", () => {
 
   it("creates tool result messages", () => {
     expect(
-      createToolResultMessage(TOOL_CALL_ID, "readFile", { ok: true }),
+      createToolResultMessage({
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        result: { ok: true },
+      }),
     ).toEqual({
       role: "tool",
       content: [

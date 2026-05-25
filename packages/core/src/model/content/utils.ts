@@ -1,18 +1,22 @@
 import type { ToolCallId } from "#core/tool/id";
 import type { TextPart, ToolCallPart, ToolResultPart } from "./types";
 
-export function createTextPart(text: string): TextPart {
+export function createTextPart({ text }: { readonly text: string }): TextPart {
   return {
     type: "text",
     text,
   };
 }
 
-export function createToolCallPart(
-  toolCallId: ToolCallId,
-  toolName: string,
-  input: unknown,
-): ToolCallPart {
+export function createToolCallPart({
+  toolCallId,
+  toolName,
+  input,
+}: {
+  readonly toolCallId: ToolCallId;
+  readonly toolName: string;
+  readonly input: unknown;
+}): ToolCallPart {
   return {
     type: "tool-call",
     toolCallId,
@@ -21,11 +25,15 @@ export function createToolCallPart(
   };
 }
 
-export function createToolResultPart(
-  toolCallId: ToolCallId,
-  toolName: string,
-  result: unknown,
-): ToolResultPart {
+export function createToolResultPart({
+  toolCallId,
+  toolName,
+  result,
+}: {
+  readonly toolCallId: ToolCallId;
+  readonly toolName: string;
+  readonly result: unknown;
+}): ToolResultPart {
   return {
     type: "tool-result",
     toolCallId,

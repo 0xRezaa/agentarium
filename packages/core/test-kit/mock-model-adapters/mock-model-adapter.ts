@@ -1,16 +1,20 @@
 import type { ModelStreamEvent } from "#core/model/events/types";
 import type { ModelAdapterId } from "#core/model/id";
 import type { ModelAdapter, ModelResponse } from "#core/model/types";
-import { collectModelResponse } from "#core/model/utils";
+import { createTextPart } from "../../src/model/content/utils";
+import {
+  createModelResponseEvent,
+  createModelTextDeltaEvent,
+} from "../../src/model/events/utils";
+import { collectModelResponse } from "../../src/model/utils";
 
 const mockModelStreamEvents: ModelStreamEvent[] = [
-  { type: "model:text-delta", delta: "Hello" },
-  { type: "model:text-delta", delta: " world" },
-  {
-    type: "model:response",
-    content: [{ type: "text", text: "Hello world" }],
+  createModelTextDeltaEvent({ delta: "Hello" }),
+  createModelTextDeltaEvent({ delta: " world" }),
+  createModelResponseEvent({
+    content: [createTextPart({ text: "Hello world" })],
     finish: { reason: "complete" },
-  },
+  }),
 ];
 
 export class MockModelAdapter implements ModelAdapter {

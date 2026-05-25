@@ -16,15 +16,21 @@ import type { ToolCallId } from "@0xrezaa/core/tool";
 export { createTextPart } from "@0xrezaa/core/model";
 
 export function createSystemMessage(...text: string[]): SystemMessage {
-  return createCoreSystemMessage(text.map(createTextPart));
+  return createCoreSystemMessage({
+    content: text.map((textPart) => createTextPart({ text: textPart })),
+  });
 }
 
 export function createUserMessage(...text: string[]): UserMessage {
-  return createCoreUserMessage(text.map(createTextPart));
+  return createCoreUserMessage({
+    content: text.map((textPart) => createTextPart({ text: textPart })),
+  });
 }
 
 export function createAssistantMessage(...text: string[]): AssistantMessage {
-  return createCoreAssistantMessage(text.map(createTextPart));
+  return createCoreAssistantMessage({
+    content: text.map((textPart) => createTextPart({ text: textPart })),
+  });
 }
 
 export function createToolResultMessage(
@@ -32,5 +38,5 @@ export function createToolResultMessage(
   result: unknown,
   toolName = "testTool",
 ): ToolResultMessage {
-  return createCoreToolResultMessage(toolCallId, toolName, result);
+  return createCoreToolResultMessage({ toolCallId, toolName, result });
 }

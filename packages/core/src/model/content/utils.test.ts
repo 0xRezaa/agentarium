@@ -11,7 +11,7 @@ const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
 
 describe("model content factories", () => {
   it("creates text parts", () => {
-    expect(createTextPart("hello")).toEqual({
+    expect(createTextPart({ text: "hello" })).toEqual({
       type: "text",
       text: "hello",
     });
@@ -19,7 +19,11 @@ describe("model content factories", () => {
 
   it("creates tool-call parts", () => {
     expect(
-      createToolCallPart(TOOL_CALL_ID, "readFile", { path: "src/a.ts" }),
+      createToolCallPart({
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        input: { path: "src/a.ts" },
+      }),
     ).toEqual({
       type: "tool-call",
       toolCallId: TOOL_CALL_ID,
@@ -30,7 +34,11 @@ describe("model content factories", () => {
 
   it("creates tool-result parts", () => {
     expect(
-      createToolResultPart(TOOL_CALL_ID, "readFile", { ok: true }),
+      createToolResultPart({
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        result: { ok: true },
+      }),
     ).toEqual({
       type: "tool-result",
       toolCallId: TOOL_CALL_ID,

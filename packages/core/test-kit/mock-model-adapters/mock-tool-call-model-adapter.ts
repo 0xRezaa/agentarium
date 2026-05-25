@@ -1,4 +1,13 @@
 import type { ModelStreamEvent } from "#core/model/events/types";
+import {
+  createTextPart,
+  createToolCallPart,
+} from "../../src/model/content/utils";
+import {
+  createModelResponseEvent,
+  createModelTextDeltaEvent,
+  createModelToolCallDeltaEvent,
+} from "../../src/model/events/utils";
 import type { ToolCallId } from "#core/tool/id";
 import { MockModelAdapter } from "./mock-model-adapter";
 
@@ -7,38 +16,32 @@ export function createMockModelAdapterWithToolCalls(): MockModelAdapter {
 }
 
 const mockToolCallModelStreamEvents: ModelStreamEvent[] = [
-  { type: "model:text-delta", delta: "I need to inspect the file first." },
-  {
-    type: "model:tool-call-delta",
+  createModelTextDeltaEvent({ delta: "I need to inspect the file first." }),
+  createModelToolCallDeltaEvent({
     toolCallId: "tool-call-1" as ToolCallId,
     toolName: "readFile",
-  },
-  {
-    type: "model:tool-call-delta",
+  }),
+  createModelToolCallDeltaEvent({
     toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: '{"path":"',
-  },
-  {
-    type: "model:tool-call-delta",
+  }),
+  createModelToolCallDeltaEvent({
     toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: "src/index.ts",
-  },
-  {
-    type: "model:tool-call-delta",
+  }),
+  createModelToolCallDeltaEvent({
     toolCallId: "tool-call-1" as ToolCallId,
     inputDelta: '"}',
-  },
-  {
-    type: "model:response",
+  }),
+  createModelResponseEvent({
     content: [
-      { type: "text", text: "I need to inspect the file first." },
-      {
-        type: "tool-call",
+      createTextPart({ text: "I need to inspect the file first." }),
+      createToolCallPart({
         toolCallId: "tool-call-1" as ToolCallId,
         toolName: "readFile",
         input: { path: "src/index.ts" },
-      },
+      }),
     ],
     finish: { reason: "tool-use" },
-  },
+  }),
 ];
