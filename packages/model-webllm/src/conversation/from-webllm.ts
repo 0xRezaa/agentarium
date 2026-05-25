@@ -24,7 +24,7 @@ function fromWebLLMChatCompletionMessage(
     role: "assistant",
     content: [
       ...(content ? [{ type: "text" as const, text: content }] : []),
-      ...(tool_calls || []).map((toolCall) => ({
+      ...(tool_calls ?? []).map((toolCall) => ({
         type: "tool-call" as const,
         toolCallId: toolCall.id as ToolCallId,
         toolName: toolCall.function.name,
