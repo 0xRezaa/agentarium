@@ -74,13 +74,14 @@ describe("WebLLMRuntime", () => {
   it("loads the model before running an operation", async () => {
     const { reload, runtime } = setupWebLLMRuntime();
     const events: string[] = [];
-    reload.mockImplementation(async () => {
+    reload.mockImplementation(() => {
       events.push("load");
+      return Promise.resolve();
     });
 
-    const result = await runtime.runWithModel("small", async () => {
+    const result = await runtime.runWithModel("small", () => {
       events.push("operation");
-      return "result";
+      return Promise.resolve("result");
     });
 
     expect(result).toBe("result");
@@ -91,13 +92,14 @@ describe("WebLLMRuntime", () => {
   it("loads the model before starting a stream", async () => {
     const { reload, runtime } = setupWebLLMRuntime();
     const events: string[] = [];
-    reload.mockImplementation(async () => {
+    reload.mockImplementation(() => {
       events.push("load");
+      return Promise.resolve();
     });
 
     const stream = runtime.streamWithModel("small", async function* () {
       events.push("operation");
-      yield "chunk";
+      yield await Promise.resolve("chunk");
     });
 
     expect(reload).not.toHaveBeenCalled();
