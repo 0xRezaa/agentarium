@@ -41,9 +41,9 @@ describe("fromWebLLMChatCompletion", () => {
     ]);
   });
 
-  it("throws when WebLLM returns no choices", () => {
+  it("throws when no completion choice is selected", () => {
     expect(() => fromWebLLMChatCompletion(createChatCompletion([]))).toThrow(
-      "WebLLM returned no completion choices.",
+      "No completion choice was selected.",
     );
   });
 

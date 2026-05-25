@@ -117,6 +117,73 @@ describe("fromWebLLMChatCompletionIterable", () => {
       },
     ]);
   });
+
+  it("ignores chunks without a selected choice", async () => {
+    const events = await collectStreamEvents(
+      fromWebLLMChatCompletionIterable(
+        toAsyncIterable([
+          createChatCompletionChunk([]),
+          createChatCompletionChunk([
+            createChunkChoice({ content: "Answer." }),
+          ]),
+          createChatCompletionChunk([], createUsage(3, 2, 5)),
+        ]),
+      ),
+    );
+
+    expect(events).toEqual([
+      { type: "model:text-delta", delta: "Answer." },
+      {
+        type: "model:response",
+        content: [{ type: "text", text: "Answer." }],
+        finish: { reason: "unknown" },
+      },
+      {
+        type: "model:usage",
+        usage: {
+          inputTokens: 3,
+          outputTokens: 2,
+          totalTokens: 5,
+          source: "provider",
+        },
+      },
+    ]);
+  });
+
+  it("emits an empty response when the selected choice has no content", async () => {
+    const events = await collectStreamEvents(
+      fromWebLLMChatCompletionIterable(
+        toAsyncIterable([
+          createChatCompletionChunk([
+            createChunkChoice({ finishReason: "stop" }),
+          ]),
+        ]),
+      ),
+    );
+
+    expect(events).toEqual([
+      {
+        type: "model:response",
+        content: [],
+        finish: { reason: "complete", rawReason: "stop" },
+      },
+    ]);
+  });
+
+  it("throws when no completion choice is selected", async () => {
+    await expect(
+      collectStreamEvents(
+        fromWebLLMChatCompletionIterable(
+          toAsyncIterable([
+            createChatCompletionChunk([]),
+            createChatCompletionChunk([
+              createChunkChoice({ content: "Ignored.", index: 1 }),
+            ]),
+          ]),
+        ),
+      ),
+    ).rejects.toThrow("No completion choice was selected.");
+  });
 });
 
 function createChatCompletionChunk(

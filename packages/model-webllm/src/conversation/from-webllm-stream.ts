@@ -18,22 +18,18 @@ import {
 
 export type WebLLMStreamChoiceSelector = (
   choices: readonly ChatCompletionChunk.Choice[],
-) => ChatCompletionChunk.Choice;
+) => ChatCompletionChunk.Choice | undefined;
 
 export function selectFirstWebLLMChoiceStreaming(
   choices: readonly ChatCompletionChunk.Choice[],
-): ChatCompletionChunk.Choice {
-  const choice = choices.find((choice) => choice.index === 0);
-  if (!choice) {
-    throw new Error("WebLLM returned no completion choices.");
-  }
-  return choice;
+): ChatCompletionChunk.Choice | undefined {
+  return choices.find((choice) => choice.index === 0);
 }
 
 function getWebLLMStreamingToolCallId(
   toolCall: ChatCompletionChunk.Choice.Delta.ToolCall,
 ): ToolCallId {
-  return (toolCall.id as ToolCallId) ?? createToolCallId();
+  return (toolCall.id as ToolCallId | undefined) ?? createToolCallId();
 }
 
 interface ToolCallPayload {
@@ -49,6 +45,7 @@ export async function* fromWebLLMChatCompletionIterable(
   let finalResponseText = "";
   let finish: ModelFinish | undefined;
   let usage: ModelUsage | undefined;
+  let selectedChoiceSeen = false;
   const toolCalls = new Map<number, ToolCallPayload>();
 
   for await (const chunk of completionIterable) {
@@ -63,6 +60,7 @@ export async function* fromWebLLMChatCompletionIterable(
     if (!choice) {
       continue;
     }
+    selectedChoiceSeen = true;
 
     if (choice.finish_reason) {
       const choiceFinish = fromWebLLMFinishReason(choice.finish_reason);
@@ -131,6 +129,10 @@ export async function* fromWebLLMChatCompletionIterable(
       : []),
     ...toolCallParts,
   ];
+
+  if (!selectedChoiceSeen) {
+    throw new Error("No completion choice was selected.");
+  }
 
   yield {
     type: "model:response",

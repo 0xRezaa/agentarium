@@ -14,7 +14,7 @@ import type {
 
 export type WebLLMChoiceSelector = (
   choices: readonly ChatCompletion.Choice[],
-) => ChatCompletion.Choice;
+) => ChatCompletion.Choice | undefined;
 
 function fromWebLLMChatCompletionMessage(
   message: ChatCompletionMessage,
@@ -36,13 +36,9 @@ function fromWebLLMChatCompletionMessage(
 
 export function selectFirstWebLLMChoiceNonStreaming(
   choices: readonly ChatCompletion.Choice[],
-): ChatCompletion.Choice {
+): ChatCompletion.Choice | undefined {
   // Chat completion choices are alternative completions from `n`, not parts of one response.
-  const [choice] = choices;
-  if (!choice) {
-    throw new Error("WebLLM returned no completion choices.");
-  }
-  return choice;
+  return choices[0];
 }
 
 export function fromWebLLMCompletionUsage(usage: CompletionUsage): ModelUsage {
@@ -81,6 +77,9 @@ export function fromWebLLMChatCompletion(
 ): ModelResponse {
   const { choices, usage } = completion;
   const choice = selectChoice(choices);
+  if (!choice) {
+    throw new Error("No completion choice was selected.");
+  }
   return {
     message: fromWebLLMChatCompletionMessage(choice.message),
     finish: fromWebLLMFinishReason(choice.finish_reason),
