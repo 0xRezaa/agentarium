@@ -19,6 +19,8 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@0xrezaa/core": "0.0.0",
+    "@0xrezaa/model-webllm": "0.0.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   }
