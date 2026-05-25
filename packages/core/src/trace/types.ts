@@ -4,13 +4,13 @@ import type { AgentRunId } from "#core/harness/id";
 import type { TraceId } from "./id";
 
 export interface TraceEvent<T = unknown> {
-  id: TraceId;
-  agentId: AgentId;
-  runId: AgentRunId;
-  point: AgentLifecyclePoint;
-  sequenceInRun: number;
-  timestamp: number;
-  payload?: T;
+  readonly id: TraceId;
+  readonly agentId: AgentId;
+  readonly runId: AgentRunId;
+  readonly point: AgentLifecyclePoint;
+  readonly sequenceInRun: number;
+  readonly timestamp: number;
+  readonly payload?: T;
 }
 
 export interface TraceSink {

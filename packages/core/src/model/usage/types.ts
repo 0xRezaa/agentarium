@@ -1,7 +1,7 @@
 /** Token/accounting metadata for a model invocation. */
 export interface ModelUsage {
-  inputTokens?: number;
-  outputTokens?: number;
-  totalTokens?: number;
-  source?: "provider" | "estimated";
+  readonly inputTokens?: number;
+  readonly outputTokens?: number;
+  readonly totalTokens?: number;
+  readonly source?: "provider" | "estimated";
 }

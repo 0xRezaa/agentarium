@@ -8,12 +8,12 @@ export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 
 export interface SystemMessage {
   role: "system";
-  content: TextPart[];
+  content: readonly TextPart[];
 }
 
 export interface UserMessage {
   role: "user";
-  content: TextPart[];
+  content: readonly TextPart[];
 }
 
 /**
@@ -22,7 +22,7 @@ export interface UserMessage {
  * They may contain text parts and tool-call parts.
  * The harness decides how and when to execute tool calls.
  */
-export type AssistantContent = (TextPart | ToolCallPart)[];
+export type AssistantContent = readonly (TextPart | ToolCallPart)[];
 
 export interface AssistantMessage {
   role: "assistant";
@@ -31,7 +31,7 @@ export interface AssistantMessage {
 
 export interface ToolResultMessage {
   role: "tool";
-  content: [ToolResultPart];
+  content: readonly [ToolResultPart];
 }
 
 export type Message =

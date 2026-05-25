@@ -17,6 +17,6 @@ export type ModelFinishReason =
   | "unknown";
 
 export interface ModelFinish {
-  reason: ModelFinishReason;
-  rawReason?: string;
+  readonly reason: ModelFinishReason;
+  readonly rawReason?: string;
 }

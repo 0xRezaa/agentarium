@@ -4,15 +4,15 @@ import type { AssistantContent } from "../messages/types";
 
 /** Final output of one model invocation. */
 export interface ModelResponseEvent {
-  type: "model:response";
-  content: AssistantContent;
-  finish: ModelFinish;
+  readonly type: "model:response";
+  readonly content: AssistantContent;
+  readonly finish: ModelFinish;
 }
 
 /** Token/accounting metadata reported or estimated for one model invocation. */
 export interface ModelUsageEvent {
-  type: "model:usage";
-  usage: ModelUsage;
+  readonly type: "model:usage";
+  readonly usage: ModelUsage;
 }
 
 export type ModelFinalEvent = ModelResponseEvent | ModelUsageEvent;

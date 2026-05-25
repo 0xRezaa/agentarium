@@ -2,16 +2,16 @@ import type { ToolCallId } from "#core/tool/id";
 
 /** Visible assistant text or hidden protocol text emitted incrementally by the model. */
 export interface ModelTextDeltaEvent {
-  type: "model:text-delta";
-  delta: string;
+  readonly type: "model:text-delta";
+  readonly delta: string;
 }
 
 /** Partial structured tool-call data emitted before the full tool call is complete. */
 export interface ModelToolCallDeltaEvent {
-  type: "model:tool-call-delta";
-  toolCallId?: ToolCallId;
-  toolName?: string;
-  inputDelta?: string;
+  readonly type: "model:tool-call-delta";
+  readonly toolCallId?: ToolCallId;
+  readonly toolName?: string;
+  readonly inputDelta?: string;
 }
 
 export type ModelDeltaEvent = ModelTextDeltaEvent | ModelToolCallDeltaEvent;
