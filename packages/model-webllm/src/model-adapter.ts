@@ -5,7 +5,7 @@ import type {
   ModelResponse,
   ModelStreamEvent,
 } from "@0xrezaa/core/model";
-import type { Initializable } from "@0xrezaa/core/lifecycle";
+import type { Disposable, Initializable } from "@0xrezaa/core/lifecycle";
 import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime";
 import type { WebLLMModelMap } from "./types";
 import {
@@ -30,7 +30,7 @@ export function createWebLLMAdapter<
 }
 
 export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
-  implements ModelAdapter, Initializable
+  implements ModelAdapter, Initializable, Disposable
 {
   public readonly id: ModelAdapterId;
   constructor(
@@ -41,6 +41,9 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   }
   async ensureInitialized(): Promise<void> {
     await this.runtime.loadModel(this.modelKey);
+  }
+  async dispose(): Promise<void> {
+    await this.runtime.dispose();
   }
   async generate(request: ModelRequest): Promise<ModelResponse> {
     return this.runtime.runWithModel(this.modelKey, async (engine, modelId) => {

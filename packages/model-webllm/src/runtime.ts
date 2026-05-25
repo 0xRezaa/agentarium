@@ -6,6 +6,7 @@ import {
 } from "@mlc-ai/web-llm";
 import type { WebLLMModelMap } from "./types";
 import { Scheduler } from "@0xrezaa/core/concurrency";
+import type { Disposable } from "#core/lifecycle";
 
 export interface WebLLMRuntimeConfig<
   TModels extends WebLLMModelMap<TModels>,
@@ -14,7 +15,9 @@ export interface WebLLMRuntimeConfig<
   cacheBackend?: AppConfig["cacheBackend"];
 }
 
-export class WebLLMRuntime<const TModels extends WebLLMModelMap<TModels>> {
+export class WebLLMRuntime<
+  const TModels extends WebLLMModelMap<TModels>,
+> implements Disposable {
   private readonly scheduler: Scheduler = new Scheduler();
   private readonly engine: MLCEngineInterface;
   private readonly modelCatalog: TModels;

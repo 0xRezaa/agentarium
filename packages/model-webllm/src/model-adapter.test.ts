@@ -59,4 +59,15 @@ describe("createWebLLMAdapter", () => {
 
     expect(webLLMMocks.reload).toHaveBeenCalledWith("small-model");
   });
+
+  it("disposes the underlying WebLLM runtime", async () => {
+    const adapter = createWebLLMAdapter({
+      models,
+      modelKey: "small",
+    });
+
+    await adapter.dispose();
+
+    expect(webLLMMocks.unload).toHaveBeenCalledTimes(1);
+  });
 });
