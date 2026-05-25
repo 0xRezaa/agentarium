@@ -8,5 +8,5 @@ export async function runAgentLoop<TContext>(
     runId,
     status: "complete",
   };
-  return agentRunResult;
+  return Promise.resolve(agentRunResult);
 }
