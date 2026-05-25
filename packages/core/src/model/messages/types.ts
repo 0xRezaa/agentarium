@@ -22,7 +22,7 @@ export interface UserMessage {
  * They may contain text parts and tool-call parts.
  * The harness decides how and when to execute tool calls.
  */
-export type AssistantContent = Array<TextPart | ToolCallPart>;
+export type AssistantContent = (TextPart | ToolCallPart)[];
 
 export interface AssistantMessage {
   role: "assistant";
