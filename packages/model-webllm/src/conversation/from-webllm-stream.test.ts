@@ -264,5 +264,5 @@ async function collectStreamEvents(
 }
 
 async function* toAsyncIterable<T>(items: T[]): AsyncIterable<T> {
-  yield* items;
+  yield* await Promise.resolve(items);
 }
