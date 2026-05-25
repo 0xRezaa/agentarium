@@ -23,7 +23,7 @@ export interface HarnessRunOptions {
   signal?: AbortSignal;
 }
 
-export interface HarnessConfig extends HarnessRunOptions {}
+export type HarnessConfig = HarnessRunOptions;
 
 export interface AgentRunContext<TContext = unknown> extends HarnessRunOptions {
   runId: AgentRunId;
