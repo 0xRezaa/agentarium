@@ -1,10 +1,13 @@
-import type { Message } from "@0xrezaa/core/model";
-import type { ToolCallId } from "@0xrezaa/core/tool";
 import {
+  createAssistantMessage,
   createSystemMessage,
+  createTextPart,
+  createToolCallPart,
   createToolResultMessage,
   createUserMessage,
-} from "@0xrezaa/core/test-kit/model-messages";
+  type Message,
+} from "@0xrezaa/core/model";
+import type { ToolCallId } from "@0xrezaa/core/tool";
 import { describe, expect, it } from "vitest";
 import {
   toWebLLMChatRequestNonStreaming,
@@ -42,10 +45,24 @@ describe("toWebLLMChatRequest", () => {
 
   it("maps supported core messages to WebLLM messages in order", () => {
     const messages = toWebLLMMessages(
-      createSystemMessage("You are ", "brief."),
-      createUserMessage("Say ", "hello."),
+      createSystemMessage({
+        content: [
+          createTextPart({ text: "You are " }),
+          createTextPart({ text: "brief." }),
+        ],
+      }),
+      createUserMessage({
+        content: [
+          createTextPart({ text: "Say " }),
+          createTextPart({ text: "hello." }),
+        ],
+      }),
       createAssistantMessageWithToolCall("I need a tool."),
-      createToolResultMessage(TOOL_CALL_ID, { ok: true }),
+      createToolResultMessage({
+        toolCallId: TOOL_CALL_ID,
+        toolName: "readFile",
+        result: { ok: true },
+      }),
     );
 
     expect(messages).toEqual([
@@ -72,16 +89,14 @@ function toWebLLMMessages(...messages: Message[]) {
 }
 
 function createAssistantMessageWithToolCall(text?: string): Message {
-  return {
-    role: "assistant",
+  return createAssistantMessage({
     content: [
-      ...(text ? [{ type: "text" as const, text }] : []),
-      {
-        type: "tool-call",
+      ...(text ? [createTextPart({ text })] : []),
+      createToolCallPart({
         toolCallId: TOOL_CALL_ID,
         toolName: "readFile",
         input: { path: "src/index.ts" },
-      },
+      }),
     ],
-  };
+  });
 }

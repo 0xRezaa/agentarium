@@ -1,13 +1,15 @@
-import type {
-  ModelTextDeltaEvent,
-  ModelToolCallDeltaEvent,
-} from "#core/model/events/delta";
-import type {
-  AssistantContent,
-  ModelFinish,
-  ModelResponseStream,
-  ModelUsage,
-  ToolCallPart,
+import {
+  createModelResponseEvent,
+  createModelTextDeltaEvent,
+  createModelToolCallDeltaEvent,
+  createModelUsageEvent,
+  createTextPart,
+  createToolCallPart,
+  type AssistantContent,
+  type ModelFinish,
+  type ModelResponseStream,
+  type ModelUsage,
+  type ToolCallPart,
 } from "@0xrezaa/core/model";
 import { createToolCallId, type ToolCallId } from "@0xrezaa/core/tool";
 import type { ChatCompletionChunk } from "@mlc-ai/web-llm";
@@ -75,10 +77,7 @@ export async function* fromWebLLMChatCompletionIterable(
     const { content, tool_calls } = choice.delta;
     if (content) {
       finalResponseText += content;
-      yield {
-        type: "model:text-delta",
-        delta: content,
-      } satisfies ModelTextDeltaEvent;
+      yield createModelTextDeltaEvent({ delta: content });
     }
     if (!tool_calls) continue;
     for (const toolCall of tool_calls) {
@@ -99,12 +98,11 @@ export async function* fromWebLLMChatCompletionIterable(
 
       toolCalls.set(toolCall.index, state);
 
-      yield {
-        type: "model:tool-call-delta",
+      yield createModelToolCallDeltaEvent({
         toolCallId: state.toolCallId,
-        ...(toolName ? { toolName } : {}),
-        ...(inputDelta ? { inputDelta } : {}),
-      } satisfies ModelToolCallDeltaEvent;
+        ...(toolName !== undefined ? { toolName } : {}),
+        ...(inputDelta !== undefined ? { inputDelta } : {}),
+      });
     }
   }
 
@@ -115,18 +113,15 @@ export async function* fromWebLLMChatCompletionIterable(
         throw new Error("WebLLM returned a tool call without a tool name.");
       }
 
-      return {
-        type: "tool-call" as const,
+      return createToolCallPart({
         toolCallId: toolCall.toolCallId,
         toolName: toolCall.toolName,
         input: toolCall.input,
-      };
+      });
     });
 
   const content: AssistantContent = [
-    ...(finalResponseText
-      ? [{ type: "text" as const, text: finalResponseText }]
-      : []),
+    ...(finalResponseText ? [createTextPart({ text: finalResponseText })] : []),
     ...toolCallParts,
   ];
 
@@ -134,16 +129,14 @@ export async function* fromWebLLMChatCompletionIterable(
     throw new Error("No completion choice was selected.");
   }
 
-  yield {
-    type: "model:response",
+  yield createModelResponseEvent({
     content,
     finish: finish ?? { reason: "unknown" },
-  };
+  });
 
   if (usage) {
-    yield {
-      type: "model:usage",
+    yield createModelUsageEvent({
       usage,
-    };
+    });
   }
 }

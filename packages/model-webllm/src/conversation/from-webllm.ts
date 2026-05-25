@@ -1,8 +1,10 @@
-import type {
-  AssistantMessage,
-  ModelFinish,
-  ModelResponse,
-  ModelUsage,
+import {
+  createTextPart,
+  createToolCallPart,
+  type AssistantMessage,
+  type ModelFinish,
+  type ModelResponse,
+  type ModelUsage,
 } from "@0xrezaa/core/model";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import type {
@@ -23,13 +25,14 @@ function fromWebLLMChatCompletionMessage(
   return {
     role: "assistant",
     content: [
-      ...(content ? [{ type: "text" as const, text: content }] : []),
-      ...(tool_calls ?? []).map((toolCall) => ({
-        type: "tool-call" as const,
-        toolCallId: toolCall.id as ToolCallId,
-        toolName: toolCall.function.name,
-        input: toolCall.function.arguments,
-      })),
+      ...(content ? [createTextPart({ text: content })] : []),
+      ...(tool_calls ?? []).map((toolCall) =>
+        createToolCallPart({
+          toolCallId: toolCall.id as ToolCallId,
+          toolName: toolCall.function.name,
+          input: toolCall.function.arguments,
+        }),
+      ),
     ],
   };
 }

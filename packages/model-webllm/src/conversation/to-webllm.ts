@@ -10,7 +10,9 @@ import type {
   ChatCompletionRequestStreaming,
 } from "@mlc-ai/web-llm";
 
-function toWebLLMMessages(messages: Message[]): ChatCompletionMessageParam[] {
+function toWebLLMMessages(
+  messages: readonly Message[],
+): ChatCompletionMessageParam[] {
   return messages.map((message) => {
     switch (message.role) {
       case "system":
