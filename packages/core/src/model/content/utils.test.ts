@@ -1,5 +1,44 @@
 import { describe, expect, it } from "vitest";
-import { stringifyToolResult } from "./utils";
+import type { ToolCallId } from "#core/tool/id";
+import {
+  createTextPart,
+  createToolCallPart,
+  createToolResultPart,
+  stringifyToolResult,
+} from "./utils";
+
+const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
+
+describe("model content factories", () => {
+  it("creates text parts", () => {
+    expect(createTextPart("hello")).toEqual({
+      type: "text",
+      text: "hello",
+    });
+  });
+
+  it("creates tool-call parts", () => {
+    expect(
+      createToolCallPart(TOOL_CALL_ID, "readFile", { path: "src/a.ts" }),
+    ).toEqual({
+      type: "tool-call",
+      toolCallId: TOOL_CALL_ID,
+      toolName: "readFile",
+      input: { path: "src/a.ts" },
+    });
+  });
+
+  it("creates tool-result parts", () => {
+    expect(
+      createToolResultPart(TOOL_CALL_ID, "readFile", { ok: true }),
+    ).toEqual({
+      type: "tool-result",
+      toolCallId: TOOL_CALL_ID,
+      toolName: "readFile",
+      result: { ok: true },
+    });
+  });
+});
 
 describe("stringifyToolResult", () => {
   it("returns string results unchanged", () => {
