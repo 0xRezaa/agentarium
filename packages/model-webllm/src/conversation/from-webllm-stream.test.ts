@@ -1,5 +1,6 @@
 import type { ChatCompletionChunk, CompletionUsage } from "@mlc-ai/web-llm";
 import type { ModelStreamEvent } from "@0xrezaa/core/model";
+import { toAsyncIterable } from "@0xrezaa/core/test-kit/utils";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import { describe, expect, it } from "vitest";
 import { fromWebLLMChatCompletionIterable } from "./index";
@@ -261,8 +262,4 @@ async function collectStreamEvents(
     collectedEvents.push(event);
   }
   return collectedEvents;
-}
-
-async function* toAsyncIterable<T>(items: T[]): AsyncIterable<T> {
-  yield* await Promise.resolve(items);
 }

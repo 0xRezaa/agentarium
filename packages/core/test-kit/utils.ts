@@ -20,3 +20,9 @@ export function toAsyncIterator<T>(
 ): AsyncIterator<T> {
   return iterable[Symbol.asyncIterator]();
 }
+
+export async function* toAsyncIterable<T>(
+  items: Iterable<T>,
+): AsyncIterable<T> {
+  yield* await Promise.resolve(items);
+}

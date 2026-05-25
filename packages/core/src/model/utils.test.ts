@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { toAsyncIterable } from "../../test-kit/utils";
 import type { ModelStreamEvent } from "#core/model/events/types";
 import { collectModelResponse } from "./utils";
 import type { ToolCallId } from "#core/tool/id";
@@ -199,7 +200,3 @@ describe("collectModelResponse", () => {
     );
   });
 });
-
-async function* toAsyncIterable<T>(items: T[]): AsyncIterable<T> {
-  yield* items;
-}
