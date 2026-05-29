@@ -1,0 +1,39 @@
+{
+  "name": "@0xrezaa/chat-assistant",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Simple fullstack chat assistant demo, driven by webllm. Supports branching conversations.",
+  "license": "MIT",
+  "author": "Reza Banazadeh",
+  "type": "module",
+  "files": [
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "react-router build",
+    "dev": "react-router dev",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@react-router/node": "7.16.0",
+    "@react-router/serve": "7.16.0",
+    "isbot": "^5.1.36",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router": "7.16.0"
+  },
+  "devDependencies": {
+    "@react-router/dev": "7.16.0",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^22",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.3"
+  }
+}
