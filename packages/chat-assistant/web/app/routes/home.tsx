@@ -1,4 +1,4 @@
-import styles from "./home.module.css";
+import styles from "../../types/web/app/routes/home.module.css";
 
 export function meta() {
   return [
