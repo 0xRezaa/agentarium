@@ -33,10 +33,11 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   implements ModelAdapter, Initializable, Disposable
 {
   public readonly id: ModelAdapterId;
-  constructor(
-    private readonly runtime: WebLLMRuntime<TModels>,
-    private readonly modelKey: keyof TModels,
-  ) {
+  private readonly runtime: WebLLMRuntime<TModels>;
+  private readonly modelKey: keyof TModels;
+  constructor(runtime: WebLLMRuntime<TModels>, modelKey: keyof TModels) {
+    this.runtime = runtime;
+    this.modelKey = modelKey;
     this.id = `web-llm-adapter-${String(modelKey)}` as ModelAdapterId;
   }
   async ensureInitialized(): Promise<void> {
