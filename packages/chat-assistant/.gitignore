@@ -5,3 +5,6 @@
 # build output
 /server/dist/
 /web/dist/
+
+# openapi generated types
+/web/src/api/openapi-generated.ts

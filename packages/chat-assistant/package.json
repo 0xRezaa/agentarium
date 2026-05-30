@@ -25,11 +25,14 @@
     "preview:web": "cd web && vite preview",
     "start": "npm run start:server",
     "start:server": "node server/dist/index.js",
-    "typecheck": "tsc -p web/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
+    "typecheck": "tsc -p web/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
+    "generate:api-types": "concurrently -k --success command-types -n server,types \"npm:dev:server\" \"wait-on http://localhost:3000/openapi.json && npm run generate:api-types:once\"",
+    "generate:api-types:once": "openapi-typescript http://localhost:3000/openapi.json -o web/src/api/openapi-generated.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.4",
     "@hono/zod-openapi": "^1.4.0",
+    "dotenv": "^17.4.2",
     "hono": "^4.12.23",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
@@ -41,6 +44,8 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "concurrently": "^9.2.1",
+    "openapi-typescript": "^7.13.0",
+    "wait-on": "^9.0.3",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.3"
