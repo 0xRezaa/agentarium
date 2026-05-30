@@ -14,10 +14,10 @@
   },
   "scripts": {
     "build": "npm run build:web && npm run build:server",
-    "build:web": "react-router build",
+    "build:web": "react-router build ./web",
     "build:server": "tsc ./server",
     "dev": "npm run dev:web && npm run dev:server",
-    "dev:web": "react-router dev",
+    "dev:web": "react-router dev ./web",
     "dev:server": "tsx watch server/src/index.ts",
     "start": "npm run start:web && npm run start:server",
     "start:web": "react-router-serve ./web/build/server/index.js",
