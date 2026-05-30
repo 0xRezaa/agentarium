@@ -9,8 +9,10 @@
       "#core": ["./packages/core/src"],
       "#model-webllm/*": ["./packages/model-webllm/src/*"],
       "#model-webllm": ["./packages/model-webllm/src"],
-      "#chat-assistant/*": ["./packages/chat-assistant/src/*"],
-      "#chat-assistant": ["./packages/chat-assistant/src"]
+      "#chat-assistant/web/*": ["./packages/chat-assistant/web/src/*"],
+      "#chat-assistant/web": ["./packages/chat-assistant/web/src"],
+      "#chat-assistant/server/*": ["./packages/chat-assistant/server/src/*"],
+      "#chat-assistant/server": ["./packages/chat-assistant/server/src"]
     },
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true
