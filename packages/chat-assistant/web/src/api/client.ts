@@ -1,8 +1,5 @@
 import { env } from "#chat-assistant/web/env";
 
-export const API_BASE_URL = env.VITE_API_BASE_URL;
-
-console.log(API_BASE_URL);
 type Fetch = typeof globalThis.fetch;
 
 export class ApiClient {
@@ -14,4 +11,4 @@ export class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient(globalThis.fetch, API_BASE_URL);
+export const apiClient = new ApiClient(globalThis.fetch, env.VITE_API_BASE_URL);
