@@ -8,8 +8,11 @@
       "#core/*": ["./packages/core/src/*"],
       "#core": ["./packages/core/src"],
       "#model-webllm/*": ["./packages/model-webllm/src/*"],
-      "#model-webllm": ["./packages/model-webllm/src"]
+      "#model-webllm": ["./packages/model-webllm/src"],
+      "#chat-assistant/*": ["./packages/chat-assistant/src/*"],
+      "#chat-assistant": ["./packages/chat-assistant/src"]
     },
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true
   }
 }
