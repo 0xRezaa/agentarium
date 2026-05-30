@@ -35,8 +35,10 @@ export function createMockStreamEvents(
 
 export class OpenHarnessMockAdapter implements ModelAdapter {
   readonly id: ModelAdapterId;
+  private readonly scenario: MockScenario;
 
-  constructor(private readonly scenario: MockScenario) {
+  constructor(scenario: MockScenario) {
+    this.scenario = scenario;
     this.id = `openharness-mock-${scenario}` as ModelAdapterId;
   }
 
