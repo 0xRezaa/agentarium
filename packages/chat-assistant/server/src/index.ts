@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 
 const app = new Hono()
+const port = Number.parseInt(process.env['PORT'] ?? '3000', 10)
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
@@ -9,7 +10,7 @@ app.get('/', (c) => {
 
 serve({
   fetch: app.fetch,
-  port: 3000
+  port,
 }, (info) => {
   console.log(`Server is running on http://localhost:${info.port}`)
 })

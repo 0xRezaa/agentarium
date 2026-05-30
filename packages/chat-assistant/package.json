@@ -14,31 +14,31 @@
   },
   "scripts": {
     "build": "npm run build:web && npm run build:server",
-    "build:web": "react-router build ./web",
-    "build:server": "tsc ./server",
-    "dev": "npm run dev:web && npm run dev:server",
-    "dev:web": "react-router dev ./web",
+    "build:web": "cd web && vite build",
+    "build:server": "tsc -p server/tsconfig.json",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f postgres pgadmin",
+    "db:up": "docker compose up -d",
+    "dev": "concurrently -k -n web,server -c cyan,magenta \"npm:dev:web\" \"npm:dev:server\"",
+    "dev:web": "cd web && vite",
     "dev:server": "tsx watch server/src/index.ts",
-    "start": "npm run start:web && npm run start:server",
-    "start:web": "react-router-serve ./web/build/server/index.js",
+    "preview:web": "cd web && vite preview",
+    "start": "npm run start:server",
     "start:server": "node server/dist/index.js",
-    "typecheck": "react-router typegen ./web && tsc"
+    "typecheck": "tsc -p web/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.4",
-    "@react-router/node": "7.16.0",
-    "@react-router/serve": "7.16.0",
     "hono": "^4.12.23",
-    "isbot": "^5.1.36",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-router": "7.16.0"
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
-    "@react-router/dev": "7.16.0",
     "@types/node": "^22",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "concurrently": "^9.2.1",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3",
     "vite": "^8.0.3"
