@@ -1,13 +1,22 @@
-import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import styles from "./home.module.css";
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Chat Assistant" },
+    {
+      name: "description",
+      content: "A simple browser-native chat assistant is coming soon.",
+    },
   ];
 }
 
 export default function Home() {
-  return <Welcome />;
+  return (
+    <main className={styles["placeholder"]}>
+      <h1 className={styles["title"]}>Chat Assistant</h1>
+      <p className={styles["description"]}>
+        A simple browser-native chat assistant is coming soon.
+      </p>
+    </main>
+  );
 }
