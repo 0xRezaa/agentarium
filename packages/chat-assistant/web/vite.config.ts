@@ -9,4 +9,9 @@ const envDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 export default defineConfig({
   plugins: [react()],
   envDir,
+  resolve: {
+    alias: {
+      "#chat-assistant/web": resolve(envDir, "web/src"),
+    },
+  },
 });
