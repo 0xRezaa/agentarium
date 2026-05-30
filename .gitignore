@@ -4,7 +4,7 @@
 
 # build
 dist
-/build/
+build
 
 # dev
 .yarn/
@@ -36,4 +36,4 @@ lerna-debug.log*
 .DS_Store
 
 # React Router
-/.react-router/
+.react-router
