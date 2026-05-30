@@ -1,17 +1,11 @@
 import { serve } from "@hono/node-server";
-import { Hono } from "hono";
-
-const app = new Hono();
-const port = Number.parseInt(process.env["PORT"] ?? "3000", 10);
-
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
+import { env } from "./env.js";
+import { app } from "./app.js";
 
 serve(
   {
     fetch: app.fetch,
-    port,
+    port: env.PORT,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${String(info.port)}`);
