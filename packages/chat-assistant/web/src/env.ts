@@ -1,13 +1,10 @@
 import { z } from "zod";
+import { webEnvSchema } from "../env.schema";
 
-const envSchema = z.object({
-  VITE_API_BASE_URL: z.url(),
-});
-
-let env: z.infer<typeof envSchema>;
+let env: z.infer<typeof webEnvSchema>;
 
 try {
-  env = envSchema.parse(import.meta.env);
+  env = webEnvSchema.parse(import.meta.env);
 } catch (error) {
   console.error("Invalid environment variables for web:", error);
   throw error;
