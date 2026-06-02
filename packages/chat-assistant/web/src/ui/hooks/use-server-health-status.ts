@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export function useServerHealthStatus() {
   const [status, setStatus] = useState<boolean | null>();
-  const [error, setError] = useState<string | null>();
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     apiClient
@@ -11,8 +11,12 @@ export function useServerHealthStatus() {
       .then((response) => {
         setStatus(response.ok);
       })
-      .catch(() => {
-        setError(error);
+      .catch((error: unknown) => {
+        console.error(
+          "Error fetching server health status:",
+          error instanceof Error ? error.message : error,
+        );
+        setError(true);
       });
   }, []);
 

@@ -14,7 +14,10 @@ export function App() {
         {error ? (
           <p>Failed to retrieve server status</p>
         ) : (
-          <p>The status of the server is: {healthStatus ?? "...loading"}</p>
+          <p>
+            The status of the server is:{" "}
+            {healthStatus !== null ? String(healthStatus) : "...loading"}
+          </p>
         )}
       </section>
     </main>
