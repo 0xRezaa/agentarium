@@ -2,7 +2,7 @@
   "dialect": "postgres",
   "url": "env(DATABASE_URL)",
   "envFile": ".env",
-  "outFile": "server/src/db/generated.ts",
+  "outFile": "server/src/db/kysely-generated.ts",
   "defaultSchemas": ["public"],
   "excludePattern": "kysely_*",
   "typeOnlyImports": true
