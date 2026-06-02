@@ -1,6 +1,7 @@
 import { Pool, type PoolConfig } from "pg";
 import { env } from "../env.js";
 import { Kysely, PostgresDialect } from "kysely";
+import type { DB } from "./generated.js";
 
 const dbPoolConfig: PoolConfig = {
   connectionString: env.DATABASE_URL,
@@ -8,7 +9,7 @@ const dbPoolConfig: PoolConfig = {
 };
 const dbPool = new Pool(dbPoolConfig);
 
-export const db = new Kysely({
+export const db = new Kysely<DB>({
   dialect: new PostgresDialect({
     pool: dbPool,
   }),
