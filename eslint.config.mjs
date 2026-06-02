@@ -7,7 +7,7 @@ export default defineConfig(
     ignores: [
       "eslint.config.mjs",
       "packages/**/dist/**",
-      "packages/**/openapi-generated*",
+      "packages/**/*-generated*",
     ],
   },
   js.configs.recommended,
