@@ -27,7 +27,9 @@
     "start:server": "node server/dist/index.js",
     "typecheck": "tsc -p web/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
     "generate:api-types": "concurrently -k --success command-types -n server,types \"npm:dev:server\" \"wait-on http://localhost:3000/openapi.json && npm run generate:api-types:once\"",
-    "generate:api-types:once": "openapi-typescript http://localhost:3000/openapi.json -o web/src/api/openapi-generated.ts"
+    "generate:api-types:once": "openapi-typescript http://localhost:3000/openapi.json -o web/src/api/openapi-generated.ts",
+    "db:codegen": "kysely-codegen --config-file .kysely-codegenrc.json",
+    "db:codegen:check": "kysely-codegen --config-file .kysely-codegenrc.json --verify"
   },
   "dependencies": {
     "@hono/node-server": "^2.0.4",
