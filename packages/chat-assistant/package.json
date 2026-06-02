@@ -34,20 +34,24 @@
     "@hono/zod-openapi": "^1.4.0",
     "dotenv": "^17.4.2",
     "hono": "^4.12.23",
+    "kysely": "^0.29.2",
+    "pg": "^8.21.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
     "concurrently": "^9.2.1",
+    "kysely-codegen": "^0.20.0",
     "openapi-typescript": "^7.13.0",
-    "wait-on": "^9.0.3",
     "tsx": "^4.22.3",
     "typescript": "^5.9.3",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "wait-on": "^9.0.3"
   }
 }
