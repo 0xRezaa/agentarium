@@ -27,3 +27,5 @@ export type GetResponse<
   : never;
 
 export type HealthResponse = GetResponse<"/api/v1/health">;
+
+export type Fetch = typeof globalThis.fetch;
