@@ -1,23 +1,6 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { db } from "#chat-assistant/server/db/database.js";
-
-const healthRouteResponseSchema = z
-  .object({
-    ok: z.boolean(),
-    service: z.string(),
-    database: z.object({
-      ok: z.boolean(),
-    }),
-  })
-  .openapi("HealthRouteResponse", {
-    example: {
-      ok: true,
-      service: "chat-assistant-service",
-      database: {
-        ok: true,
-      },
-    },
-  });
+import { healthRouteResponseSchema } from "./schemas.js";
 
 const healthOpenApiRoute = createRoute({
   method: "get",
