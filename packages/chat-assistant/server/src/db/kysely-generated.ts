@@ -3,4 +3,43 @@
  * Please do not edit it manually.
  */
 
-export interface DB {}
+import type { ColumnType } from "kysely";
+
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+
+export type Json = JsonValue;
+
+export type JsonArray = JsonValue[];
+
+export type JsonObject = {
+  [x: string]: JsonValue | undefined;
+};
+
+export type JsonPrimitive = boolean | number | string | null;
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export interface Conversations {
+  created_at: Generated<Timestamp>;
+  current_message_id: string | null;
+  id: string;
+  root_message_id: string;
+  updated_at: Generated<Timestamp>;
+}
+
+export interface Messages {
+  content: Json;
+  created_at: Generated<Timestamp>;
+  id: string;
+  parent_message_id: string | null;
+  role: string;
+}
+
+export interface DB {
+  conversations: Conversations;
+  messages: Messages;
+}
