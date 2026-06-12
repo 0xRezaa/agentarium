@@ -18,9 +18,10 @@ const mockModelStreamEvents: ModelStreamEvent[] = [
 ];
 
 export class MockModelAdapter implements ModelAdapter {
-  constructor(
-    private readonly events: ModelStreamEvent[] = mockModelStreamEvents,
-  ) {}
+  private readonly events: ModelStreamEvent[];
+  constructor(events: ModelStreamEvent[] = mockModelStreamEvents) {
+    this.events = events;
+  }
   id: ModelAdapterId = "mock-model-adapter" as ModelAdapterId;
   // Static test fixtures still implement the async model stream contract.
   // eslint-disable-next-line @typescript-eslint/require-await
