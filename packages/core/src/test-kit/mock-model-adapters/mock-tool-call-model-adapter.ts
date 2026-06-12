@@ -1,15 +1,15 @@
-import type { ModelStreamEvent } from "#core/model/events/types";
+import type { ModelStreamEvent } from "../../model/events/types.js";
 import {
   createTextPart,
   createToolCallPart,
-} from "../../src/model/content/utils";
+} from "../../model/content/utils.js";
 import {
   createModelResponseEvent,
   createModelTextDeltaEvent,
   createModelToolCallDeltaEvent,
-} from "../../src/model/events/utils";
-import type { ToolCallId } from "#core/tool/id";
-import { MockModelAdapter } from "./mock-model-adapter";
+} from "../../model/events/utils.js";
+import type { ToolCallId } from "../../tool/id.js";
+import { MockModelAdapter } from "./mock-model-adapter.js";
 
 export function createMockModelAdapterWithToolCalls(): MockModelAdapter {
   return new MockModelAdapter(mockToolCallModelStreamEvents);

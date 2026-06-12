@@ -1,6 +1,6 @@
-import type { ModelResponseEvent, ModelUsageEvent } from "./events/final";
-import type { ModelStreamEvent } from "./events/types";
-import type { ModelResponse } from "./types";
+import type { ModelResponseEvent, ModelUsageEvent } from "./events/final.js";
+import type { ModelStreamEvent } from "./events/types.js";
+import type { ModelResponse } from "./types.js";
 
 /**
  * Extracts the single final `model:response` event from a completed model stream.

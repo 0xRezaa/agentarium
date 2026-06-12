@@ -1,3 +1,3 @@
-import type { Branded } from "#core/types";
+import type { Branded } from "../types.js";
 
 export type ModelAdapterId = Branded<string, "ModelAdapterId">;

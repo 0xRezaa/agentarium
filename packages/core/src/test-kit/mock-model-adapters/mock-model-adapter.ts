@@ -1,12 +1,12 @@
-import type { ModelStreamEvent } from "#core/model/events/types";
-import type { ModelAdapterId } from "#core/model/id";
-import type { ModelAdapter, ModelResponse } from "#core/model/types";
-import { createTextPart } from "../../src/model/content/utils";
+import type { ModelStreamEvent } from "../../model/events/types.js";
+import type { ModelAdapterId } from "../../model/id.js";
+import type { ModelAdapter, ModelResponse } from "../../model/types.js";
+import { createTextPart } from "../../model/content/utils.js";
 import {
   createModelResponseEvent,
   createModelTextDeltaEvent,
-} from "../../src/model/events/utils";
-import { collectModelResponse } from "../../src/model/utils";
+} from "../../model/events/utils.js";
+import { collectModelResponse } from "../../model/utils.js";
 
 const mockModelStreamEvents: ModelStreamEvent[] = [
   createModelTextDeltaEvent({ delta: "Hello" }),
