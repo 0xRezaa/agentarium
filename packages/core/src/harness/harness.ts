@@ -1,12 +1,12 @@
-import type { Agent } from "#core/agent/types";
-import { runAgentLoop } from "./agent-loop";
-import { createAgentRunId } from "./id";
+import type { Agent } from "../agent/types.js";
+import { runAgentLoop } from "./agent-loop.js";
+import { createAgentRunId } from "./id.js";
 import type {
   AgentRunContext,
   AgentRunInput,
   HarnessRunOptions,
   IHarness,
-} from "./types";
+} from "./types.js";
 
 export class Harness implements IHarness {
   async run(agent: Agent, input: AgentRunInput, options?: HarnessRunOptions) {
