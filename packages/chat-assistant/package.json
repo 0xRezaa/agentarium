@@ -34,6 +34,7 @@
     "db:migrate:down": "tsx server/src/db/migrate.ts down"
   },
   "dependencies": {
+    "@0xrezaa/core": "^0.0.0",
     "@hono/node-server": "^2.0.4",
     "@hono/zod-openapi": "^1.4.0",
     "dotenv": "^17.4.2",
