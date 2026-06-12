@@ -1,8 +1,8 @@
-import type { ModelStreamEvent } from "./events/types";
-import type { ModelFinish } from "./finish/types";
-import type { ModelAdapterId } from "./id";
-import type { AssistantMessage, Message } from "./messages/types";
-import type { ModelUsage } from "./usage/types";
+import type { ModelStreamEvent } from "./events/types.js";
+import type { ModelFinish } from "./finish/types.js";
+import type { ModelAdapterId } from "./id.js";
+import type { AssistantMessage, Message } from "./messages/types.js";
+import type { ModelUsage } from "./usage/types.js";
 
 export interface ModelRequest {
   messages: readonly Message[];
