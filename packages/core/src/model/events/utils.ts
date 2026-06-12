@@ -1,9 +1,9 @@
-import type { ToolCallId } from "#core/tool/id";
-import type { ModelFinish } from "../finish/types";
-import type { AssistantContent } from "../messages/types";
-import type { ModelUsage } from "../usage/types";
-import type { ModelTextDeltaEvent, ModelToolCallDeltaEvent } from "./delta";
-import type { ModelResponseEvent, ModelUsageEvent } from "./final";
+import type { ToolCallId } from "../../tool/id.js";
+import type { ModelFinish } from "../finish/types.js";
+import type { AssistantContent } from "../messages/types.js";
+import type { ModelUsage } from "../usage/types.js";
+import type { ModelTextDeltaEvent, ModelToolCallDeltaEvent } from "./delta.js";
+import type { ModelResponseEvent, ModelUsageEvent } from "./final.js";
 
 export function createModelTextDeltaEvent({
   delta,

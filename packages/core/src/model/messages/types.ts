@@ -2,7 +2,7 @@ import type {
   TextPart,
   ToolCallPart,
   ToolResultPart,
-} from "#core/model/content/types";
+} from "../content/types.js";
 
 export type ModelMessageRole = "system" | "user" | "assistant" | "tool";
 

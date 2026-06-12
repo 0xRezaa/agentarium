@@ -1,6 +1,6 @@
-import type { ModelFinish } from "#core/model/finish/types";
-import type { ModelUsage } from "#core/model/usage/types";
-import type { AssistantContent } from "../messages/types";
+import type { ModelFinish } from "../finish/types.js";
+import type { ModelUsage } from "../usage/types.js";
+import type { AssistantContent } from "../messages/types.js";
 
 /** Final output of one model invocation. */
 export interface ModelResponseEvent {

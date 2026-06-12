@@ -1,4 +1,4 @@
-import type { ToolCallId } from "#core/tool/id";
+import type { ToolCallId } from "../../tool/id.js";
 
 /** Visible assistant text or hidden protocol text emitted incrementally by the model. */
 export interface ModelTextDeltaEvent {
