@@ -1,4 +1,4 @@
-import type { Initializable } from "./types";
+import type { Initializable } from "./types.js";
 
 export function isInitializable(obj: unknown): obj is Initializable {
   return (
