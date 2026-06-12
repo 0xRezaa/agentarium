@@ -3,15 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
   "exports": {
-    "./model": "./src/model/index.ts",
-    "./agent": "./src/agent/index.ts",
-    "./tool": "./src/tool/index.ts",
-    "./harness": "./src/harness/index.ts",
-    "./trace": "./src/trace/index.ts",
-    "./lifecycle": "./src/lifecycle/index.ts",
-    "./concurrency": "./src/concurrency/index.ts",
-    ".": "./src/index.ts",
-    "./test-kit/*": "./test-kit/*.ts"
-  }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./dist/*/index.d.ts",
+      "import": "./dist/*/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
 }
