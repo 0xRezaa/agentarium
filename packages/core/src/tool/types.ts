@@ -1,6 +1,6 @@
-import type { AgentId } from "#core/agent/id";
-import type { AgentRunId } from "#core/harness/id";
-import type { ToolCallId } from "./id";
+import type { AgentId } from "../agent/id.js";
+import type { AgentRunId } from "../harness/id.js";
+import type { ToolCallId } from "./id.js";
 
 export interface ToolExecutionContext {
   toolCallId: ToolCallId;
