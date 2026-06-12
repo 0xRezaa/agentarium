@@ -1,16 +1,14 @@
-import type {
-  AssistantMessage,
-  SystemMessage,
-  ToolResultMessage,
-  UserMessage,
-} from "@0xrezaa/core/model";
 import {
+  type AssistantMessage,
+  type SystemMessage,
+  type ToolResultMessage,
+  type UserMessage,
   createAssistantMessage as createCoreAssistantMessage,
   createSystemMessage as createCoreSystemMessage,
   createTextPart,
   createToolResultMessage as createCoreToolResultMessage,
   createUserMessage as createCoreUserMessage,
-} from "@0xrezaa/core/model";
+} from "../model/index.js";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 
 export { createTextPart } from "@0xrezaa/core/model";
