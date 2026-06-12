@@ -1,4 +1,4 @@
-import type { ToolCallId } from "#core/tool/id";
+import type { ToolCallId } from "../../tool/id.js";
 
 export interface TextPart {
   type: "text";

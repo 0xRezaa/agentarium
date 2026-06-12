@@ -1,5 +1,5 @@
-import type { ToolCallId } from "#core/tool/id";
-import type { TextPart, ToolCallPart, ToolResultPart } from "./types";
+import type { ToolCallId } from "../../tool/id.js";
+import type { TextPart, ToolCallPart, ToolResultPart } from "./types.js";
 
 export function createTextPart({ text }: { readonly text: string }): TextPart {
   return {
