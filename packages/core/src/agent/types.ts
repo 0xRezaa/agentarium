@@ -1,6 +1,6 @@
-import type { Tool } from "#core/tool/types";
-import type { ModelAdapter } from "#core/model/types";
-import type { AgentId } from "./id";
+import type { Tool } from "../tool/types.js";
+import type { ModelAdapter } from "../model/types.js";
+import type { AgentId } from "./id.js";
 
 /**
  * Agent loop phases
