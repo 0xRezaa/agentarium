@@ -1,7 +1,7 @@
-import type { AgentId } from "#core/agent/id";
-import type { AgentLifecyclePoint } from "#core/agent/types";
-import type { AgentRunId } from "#core/harness/id";
-import type { TraceId } from "./id";
+import type { AgentId } from "../agent/id.js";
+import type { AgentLifecyclePoint } from "../agent/types.js";
+import type { AgentRunId } from "../harness/id.js";
+import type { TraceId } from "./id.js";
 
 export interface TraceEvent<T = unknown> {
   readonly id: TraceId;

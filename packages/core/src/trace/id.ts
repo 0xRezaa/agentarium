@@ -1,4 +1,4 @@
-import type { Branded } from "#core/types";
+import type { Branded } from "../types.js";
 
 export type TraceId = Branded<string, "TraceId">;
 
