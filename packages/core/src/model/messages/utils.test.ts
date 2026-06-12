@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import type { ToolCallId } from "../../tool/id";
-import { createTextPart, createToolCallPart } from "../content/utils";
+import type { ToolCallId } from "../../tool/id.js";
+import { createTextPart, createToolCallPart } from "../content/utils.js";
 import {
   createAssistantMessage,
   createSystemMessage,
   createToolResultMessage,
   createUserMessage,
-} from "./utils";
+} from "./utils.js";
 
 const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
 

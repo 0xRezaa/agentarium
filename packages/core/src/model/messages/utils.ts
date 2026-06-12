@@ -1,13 +1,13 @@
-import { createToolResultPart } from "../content/utils";
-import type { TextPart } from "../content/types";
-import type { ToolCallId } from "../../tool/id";
+import { createToolResultPart } from "../content/utils.js";
+import type { TextPart } from "../content/types.js";
+import type { ToolCallId } from "../../tool/id.js";
 import type {
   AssistantContent,
   AssistantMessage,
   SystemMessage,
   ToolResultMessage,
   UserMessage,
-} from "./types";
+} from "./types.js";
 
 export function createSystemMessage({
   content,
