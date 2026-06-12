@@ -1,4 +1,4 @@
-import type { AgentRunContext, AgentRunResult } from "./types";
+import type { AgentRunContext, AgentRunResult } from "./types.js";
 
 export async function runAgentLoop<TContext>(
   context: AgentRunContext<TContext>,

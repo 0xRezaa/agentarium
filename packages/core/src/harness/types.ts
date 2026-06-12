@@ -1,7 +1,7 @@
-import type { Agent } from "#core/agent/types";
-import type { Message } from "#core/model/messages/types";
-import type { TraceSink } from "#core/trace/types";
-import type { AgentRunId } from "./id";
+import type { Agent } from "../agent/types.js";
+import type { Message } from "../model/messages/types.js";
+import type { TraceSink } from "../trace/types.js";
+import type { AgentRunId } from "./id.js";
 
 export interface AgentRunInput<TContext = unknown> {
   input: string;

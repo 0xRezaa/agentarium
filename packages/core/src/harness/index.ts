@@ -1,4 +1,4 @@
-export type * from "./types";
-export * from "./id";
-export * from "./agent-loop";
-export * from "./harness";
+export type * from "./types.js";
+export * from "./id.js";
+export * from "./agent-loop.js";
+export * from "./harness.js";
