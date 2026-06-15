@@ -1,6 +1,6 @@
 import type { MLCEngineConfig } from "@mlc-ai/web-llm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createWebLLMAdapter, WebLLMAdapter } from "./index";
+import { createWebLLMAdapter, WebLLMAdapter } from "./index.js";
 
 const webLLMMocks = vi.hoisted(() => {
   const reload = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);

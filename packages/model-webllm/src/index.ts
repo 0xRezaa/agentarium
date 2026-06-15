@@ -1,6 +1,6 @@
-export * from "./model-adapter";
-export * from "./runtime";
-export type * from "./types";
+export * from "./model-adapter.js";
+export * from "./runtime.js";
+export type * from "./types.js";
 export {
   prebuiltAppConfig,
   type InitProgressReport,

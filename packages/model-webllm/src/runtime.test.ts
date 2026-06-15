@@ -1,7 +1,8 @@
-import type { MLCEngineConfig, MLCEngineInterface } from "@mlc-ai/web-llm";
-import { toAsyncIterator } from "@0xrezaa/core/test-kit/utils";
+import type { MLCEngineConfig } from "@mlc-ai/web-llm/lib/config.js";
+import type { MLCEngineInterface } from "@mlc-ai/web-llm/lib/types.js";
+import { toAsyncIterator } from "@0xrezaa/core/test-kit";
 import { describe, expect, it, vi } from "vitest";
-import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime";
+import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime.js";
 
 vi.mock("@mlc-ai/web-llm", () => ({
   MLCEngine: vi.fn(),
