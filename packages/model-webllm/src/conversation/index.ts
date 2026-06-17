@@ -3,13 +3,13 @@ export {
   fromWebLLMFinishReason,
   selectFirstWebLLMChoiceNonStreaming,
   type WebLLMChoiceSelector,
-} from "./from-webllm";
+} from "./from-webllm.js";
 export {
   fromWebLLMChatCompletionIterable,
   selectFirstWebLLMChoiceStreaming,
   type WebLLMStreamChoiceSelector,
-} from "./from-webllm-stream";
+} from "./from-webllm-stream.js";
 export {
   toWebLLMChatRequestNonStreaming,
   toWebLLMChatRequestStreaming,
-} from "./to-webllm";
+} from "./to-webllm.js";

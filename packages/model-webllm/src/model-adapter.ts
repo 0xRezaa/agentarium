@@ -6,14 +6,14 @@ import type {
   ModelStreamEvent,
 } from "@0xrezaa/core/model";
 import type { Disposable, Initializable } from "@0xrezaa/core/lifecycle";
-import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime";
-import type { WebLLMModelMap } from "./types";
+import { WebLLMRuntime, type WebLLMRuntimeConfig } from "./runtime.js";
+import type { WebLLMModelMap } from "./types.js";
 import {
   fromWebLLMChatCompletion,
   fromWebLLMChatCompletionIterable,
   toWebLLMChatRequestNonStreaming,
   toWebLLMChatRequestStreaming,
-} from "./conversation";
+} from "./conversation/index.js";
 
 export interface WebLLMAdapterConfig<
   TModels extends WebLLMModelMap<TModels>,
@@ -49,8 +49,7 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
   async generate(request: ModelRequest): Promise<ModelResponse> {
     return this.runtime.runWithModel(this.modelKey, async (engine, modelId) => {
       const webLLMRequest = toWebLLMChatRequestNonStreaming(request, modelId);
-      const chatCompletion =
-        await engine.chat.completions.create(webLLMRequest);
+      const chatCompletion = await engine.chatCompletion(webLLMRequest);
       return fromWebLLMChatCompletion(chatCompletion);
     });
   }
@@ -59,8 +58,7 @@ export class WebLLMAdapter<const TModels extends WebLLMModelMap<TModels>>
       this.modelKey,
       async function* (engine, modelId) {
         const webLLMRequest = toWebLLMChatRequestStreaming(request, modelId);
-        const chatCompletion =
-          await engine.chat.completions.create(webLLMRequest);
+        const chatCompletion = await engine.chatCompletion(webLLMRequest);
         yield* fromWebLLMChatCompletionIterable(chatCompletion);
       },
     );

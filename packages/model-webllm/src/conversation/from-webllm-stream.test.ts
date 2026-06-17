@@ -1,9 +1,9 @@
 import type { ChatCompletionChunk, CompletionUsage } from "@mlc-ai/web-llm";
 import type { ModelStreamEvent } from "@0xrezaa/core/model";
-import { toAsyncIterable } from "@0xrezaa/core/test-kit/utils";
+import { toAsyncIterable } from "@0xrezaa/core/test-kit";
 import type { ToolCallId } from "@0xrezaa/core/tool";
 import { describe, expect, it } from "vitest";
-import { fromWebLLMChatCompletionIterable } from "./index";
+import { fromWebLLMChatCompletionIterable } from "./index.js";
 
 const MODEL_ID = "test-model";
 const TOOL_CALL_ID = "tool-call-1" as ToolCallId;

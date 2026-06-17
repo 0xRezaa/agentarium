@@ -16,7 +16,7 @@ import type { ChatCompletionChunk } from "@mlc-ai/web-llm";
 import {
   fromWebLLMCompletionUsage,
   fromWebLLMFinishReason,
-} from "./from-webllm";
+} from "./from-webllm.js";
 
 export type WebLLMStreamChoiceSelector = (
   choices: readonly ChatCompletionChunk.Choice[],

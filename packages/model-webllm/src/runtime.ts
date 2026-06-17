@@ -1,6 +1,9 @@
-import { MLCEngine } from "@mlc-ai/web-llm/lib/engine.js";
-import type { AppConfig, MLCEngineConfig } from "@mlc-ai/web-llm/lib/config.js";
-import type { MLCEngineInterface } from "@mlc-ai/web-llm/lib/types.js";
+import { MLCEngine } from "@mlc-ai/web-llm";
+import type {
+  AppConfig,
+  MLCEngineConfig,
+  MLCEngineInterface,
+} from "@mlc-ai/web-llm";
 import type { WebLLMModelMap } from "./types.js";
 import { Scheduler } from "@0xrezaa/core/concurrency";
 import type { Disposable } from "@0xrezaa/core/lifecycle";

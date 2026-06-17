@@ -12,7 +12,7 @@ import { describe, expect, it } from "vitest";
 import {
   toWebLLMChatRequestNonStreaming,
   toWebLLMChatRequestStreaming,
-} from "./index";
+} from "./index.js";
 
 const MODEL_ID = "test-model";
 const TOOL_CALL_ID = "tool-call-1" as ToolCallId;
