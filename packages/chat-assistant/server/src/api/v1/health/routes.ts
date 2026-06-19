@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { db } from "#chat-assistant/server/db/database.js";
+import { db } from "../../../db/database.js";
 import { healthRouteResponseSchema } from "./schemas.js";
 
 const healthOpenApiRoute = createRoute({
