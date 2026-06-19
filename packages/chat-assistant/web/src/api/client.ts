@@ -1,4 +1,4 @@
-import { env } from "#chat-assistant/web/env";
+import { env } from "#chat-assistant/env";
 import type { Fetch, HealthResponse } from "./types";
 
 export class ApiClient {

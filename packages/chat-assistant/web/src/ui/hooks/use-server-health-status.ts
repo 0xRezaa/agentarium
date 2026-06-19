@@ -1,4 +1,4 @@
-import { apiClient } from "#chat-assistant/web/api/client";
+import { apiClient } from "#chat-assistant/api/client";
 import { useEffect, useState } from "react";
 
 export function useServerHealthStatus() {
