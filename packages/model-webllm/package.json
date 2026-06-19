@@ -21,6 +21,7 @@
     "dist"
   ],
   "dependencies": {
+    "@0xrezaa/core": "0.0.0",
     "@mlc-ai/web-llm": "^0.2.83"
   }
 }

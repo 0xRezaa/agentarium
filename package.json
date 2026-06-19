@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "npm run dev -w @0xrezaa/openharness",
-    "build": "npm run build -w @0xrezaa/openharness",
+    "build": "npm run build -w @0xrezaa/core && npm run build -w @0xrezaa/model-webllm && npm run build -w @0xrezaa/chat-assistant && npm run build -w @0xrezaa/openharness",
     "typecheck": "npm run typecheck -w @0xrezaa/openharness",
     "test": "vitest run",
     "test:watch": "vitest",
