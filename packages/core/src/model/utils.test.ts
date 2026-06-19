@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { toAsyncIterable } from "../../test-kit/utils";
-import type { ModelStreamEvent } from "#core/model/events/types";
-import { collectModelResponse } from "./utils";
-import type { ToolCallId } from "#core/tool/id";
-import type { ModelResponse } from "./types";
+import { toAsyncIterable } from "../test-kit/utils.js";
+import type { ModelStreamEvent } from "./events/types.js";
+import { collectModelResponse } from "./utils.js";
+import type { ToolCallId } from "../tool/id.js";
+import type { ModelResponse } from "./types.js";
 
 describe("collectModelResponse", () => {
   it("returns the final model response from a stream", async () => {
