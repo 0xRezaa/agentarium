@@ -1,15 +1,14 @@
-import { createRoute } from "@hono/zod-openapi";
+import { createRoute, type RouteHandler } from "@hono/zod-openapi";
 import {
   badRequestResponse,
   internalServerErrorResponse,
   notFoundResponse,
-} from "../../errors/index.js";
-import { createApiRouter } from "../../router.js";
-import { conversationParamsSchema, conversationsSchema } from "./schemas.js";
+} from "../../../errors/index.js";
+import { conversationParamsSchema, conversationsSchema } from "../schemas.js";
 
-const getConversationRoute = createRoute({
+export const getConversationOpenApiRoute = createRoute({
   method: "get",
-  path: "/conversations/{conversationId}",
+  path: "/{conversationId}",
   request: {
     params: conversationParamsSchema,
   },
@@ -30,8 +29,8 @@ const getConversationRoute = createRoute({
   tags: ["Conversations"],
 });
 
-export const conversationRoutes = createApiRouter();
-
-conversationRoutes.openapi(getConversationRoute, () => {
+export const getConversationHandler: RouteHandler<
+  typeof getConversationOpenApiRoute
+> = () => {
   throw new Error("Not implemented");
-});
+};
