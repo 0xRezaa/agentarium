@@ -1,2 +1,4 @@
+server/dist
+web/dist
 web/src/api/openapi-generated.ts
 server/src/db/kysely-generated.ts
