@@ -2,66 +2,75 @@ import { createJsonOpenApiResponse } from "../responses.js";
 import {
   apiErrorResponseSchema,
   createApiErrorResponse,
-  type ApiErrorCode,
+  type ApiErrorResponse,
 } from "./schemas.js";
 
 function createApiErrorOpenApiResponse({
-  code,
   description,
-  message,
+  error,
 }: {
-  code: ApiErrorCode;
   description: string;
-  message: string;
+  error: ApiErrorResponse["error"];
 }) {
   return createJsonOpenApiResponse({
     description,
     schema: apiErrorResponseSchema,
-    example: createApiErrorResponse({
-      code,
-      message,
-    }),
+    example: createApiErrorResponse(error),
   });
 }
 
 export const badRequestResponse = createApiErrorOpenApiResponse({
-  code: "bad_request",
   description: "The request is invalid.",
-  message: "The request is invalid.",
+  error: {
+    code: "bad_request",
+    message: "The request is invalid.",
+  },
 });
 
 export const validationFailedResponse = createApiErrorOpenApiResponse({
-  code: "validation_failed",
   description: "The request failed validation.",
-  message: "Request validation failed.",
+  error: {
+    code: "validation_failed",
+    message: "Request validation failed.",
+  },
 });
 
 export const notFoundResponse = createApiErrorOpenApiResponse({
-  code: "not_found",
   description: "The requested resource was not found.",
-  message: "The requested resource was not found.",
+  error: {
+    code: "not_found",
+    message: "The requested resource was not found.",
+  },
 });
 
 export const conflictResponse = createApiErrorOpenApiResponse({
-  code: "conflict",
   description: "The request conflicts with the current resource state.",
-  message: "The request conflicts with the current resource state.",
+  error: {
+    code: "conflict",
+    message: "The request conflicts with the current resource state.",
+  },
 });
 
 export const rateLimitedResponse = createApiErrorOpenApiResponse({
-  code: "rate_limited",
   description: "Too many requests.",
-  message: "Too many requests.",
+  error: {
+    code: "rate_limited",
+    message: "Too many requests.",
+  },
 });
 
 export const internalServerErrorResponse = createApiErrorOpenApiResponse({
-  code: "internal_server_error",
   description: "An unexpected server error occurred.",
-  message: "An unexpected server error occurred.",
+  error: {
+    code: "internal_server_error",
+    message: "An unexpected server error occurred.",
+  },
 });
 
 export const serviceUnavailableResponse = createApiErrorOpenApiResponse({
-  code: "service_unavailable",
   description: "A required dependency is unavailable.",
-  message: "A required dependency is unavailable.",
+  error: {
+    code: "service_unavailable",
+    message: "A required dependency is unavailable.",
+  },
 });
