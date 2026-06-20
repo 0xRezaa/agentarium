@@ -1,10 +1,12 @@
 import { z } from "@hono/zod-openapi";
+import type { Selectable } from "kysely";
+import type { Conversations as DbConversation } from "../../../db/kysely-generated.js";
+import type { ApiShape } from "../../types.js";
 
-// TODO: anchor these schemas on the generated db types from kysely
 export const conversationsSchema = z.object({
-  id: z.string(),
-  current_message_id: z.string().nullable(),
-  root_message_id: z.string(),
-  created_at: z.date(),
-  updated_at: z.date(),
-});
+  id: z.uuid(),
+  currentMessageId: z.uuid().nullable(),
+  rootMessageId: z.uuid(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+}) satisfies z.ZodType<ApiShape<Selectable<DbConversation>>>;
