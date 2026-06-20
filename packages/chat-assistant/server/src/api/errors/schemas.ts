@@ -65,26 +65,3 @@ export function createApiErrorResponse({
     },
   };
 }
-
-export function createApiErrorOpenApiResponse({
-  code,
-  description,
-  message,
-}: {
-  code: ApiErrorCode;
-  description: string;
-  message: string;
-}) {
-  return {
-    description,
-    content: {
-      "application/json": {
-        schema: apiErrorResponseSchema,
-        example: createApiErrorResponse({
-          code,
-          message,
-        }),
-      },
-    },
-  };
-}

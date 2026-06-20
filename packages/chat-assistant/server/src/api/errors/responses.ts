@@ -1,4 +1,28 @@
-import { createApiErrorOpenApiResponse } from "./schemas.js";
+import { createJsonOpenApiResponse } from "../responses.js";
+import {
+  apiErrorResponseSchema,
+  createApiErrorResponse,
+  type ApiErrorCode,
+} from "./schemas.js";
+
+function createApiErrorOpenApiResponse({
+  code,
+  description,
+  message,
+}: {
+  code: ApiErrorCode;
+  description: string;
+  message: string;
+}) {
+  return createJsonOpenApiResponse({
+    description,
+    schema: apiErrorResponseSchema,
+    example: createApiErrorResponse({
+      code,
+      message,
+    }),
+  });
+}
 
 export const badRequestResponse = createApiErrorOpenApiResponse({
   code: "bad_request",
