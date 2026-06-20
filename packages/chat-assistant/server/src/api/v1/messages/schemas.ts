@@ -12,7 +12,7 @@ export const messageSchema = z.object({
   parentMessageId: z.uuid().nullable(),
   content: z.json(),
   role: messageRoleSchema,
-  created_at: z.date(),
+  createdAt: z.date(),
 });
 
 export const messagesRouteResponseSchema = z
