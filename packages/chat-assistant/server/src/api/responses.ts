@@ -18,14 +18,14 @@ export function createApiDataResponseSchema<DataSchema extends z.ZodType>(
   });
 }
 
-export function createJsonOpenApiResponse({
+export function createJsonOpenApiResponse<DataSchema extends z.ZodType>({
   description,
   example,
   schema,
 }: {
   description: string;
   example?: unknown;
-  schema: z.ZodType;
+  schema: DataSchema;
 }) {
   return {
     description,
