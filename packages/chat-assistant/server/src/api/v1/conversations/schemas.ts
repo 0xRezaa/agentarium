@@ -12,3 +12,13 @@ export const conversationsSchema = z.object({
 }) satisfies z.ZodType<ApiShape<Selectable<DbConversation>>>;
 
 export type ConversationDto = z.infer<typeof conversationsSchema>;
+
+export const conversationParamsSchema = z.object({
+  conversationId: z.uuid().openapi({
+    param: {
+      name: "conversationId",
+      in: "path",
+    },
+    example: "7b3b6b6e-8b5f-4f1e-a5f5-6e0b2d0d8f91",
+  }),
+});
