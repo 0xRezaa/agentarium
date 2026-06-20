@@ -10,3 +10,5 @@ export const conversationsSchema = z.object({
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 }) satisfies z.ZodType<ApiShape<Selectable<DbConversation>>>;
+
+export type ConversationDto = z.infer<typeof conversationsSchema>;

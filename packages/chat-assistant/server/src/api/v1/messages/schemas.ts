@@ -18,6 +18,8 @@ export const messageSchema = z.object({
   createdAt: z.iso.datetime(),
 }) satisfies z.ZodType<ApiShape<Selectable<DbMessage>>>;
 
+export type MessageDto = z.infer<typeof messageSchema>;
+
 export const messagesRouteResponseSchema = z
   .object({
     ok: z.boolean(),
