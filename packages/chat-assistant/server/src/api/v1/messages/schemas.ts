@@ -1,13 +1,12 @@
 import { z } from "@hono/zod-openapi";
+import type { ModelMessageRole } from "@0xrezaa/core/model";
 
-// TODO: anchor these schemas on the message types from the core package
 export const messageRoleSchema = z.union([
   z.literal("user"),
   z.literal("assistant"),
   z.literal("system"),
-]);
+]) satisfies z.ZodType<ModelMessageRole>;
 
-// TODO: anchor these schemas on the generated db types from kysely
 export const messageSchema = z.object({
   id: z.uuid(),
   parentMessageId: z.uuid().nullable(),
