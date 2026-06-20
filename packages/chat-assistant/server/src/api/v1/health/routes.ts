@@ -1,5 +1,6 @@
-import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import { db } from "../../../db/database.js";
+import { createApiRouter } from "../../router.js";
 import { healthRouteResponseSchema } from "./schemas.js";
 
 const healthOpenApiRoute = createRoute({
@@ -27,7 +28,7 @@ const healthOpenApiRoute = createRoute({
   tags: ["Health"],
 });
 
-export const healthRoute = new OpenAPIHono();
+export const healthRoute = createApiRouter();
 
 healthRoute.openapi(healthOpenApiRoute, async (c) => {
   try {

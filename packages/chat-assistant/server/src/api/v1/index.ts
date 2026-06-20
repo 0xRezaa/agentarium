@@ -1,6 +1,6 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { createApiRouter } from "../router.js";
 import { healthRoute } from "./health/index.js";
 
-export const v1Api = new OpenAPIHono();
+export const v1Api = createApiRouter();
 
 v1Api.route("/", healthRoute);
