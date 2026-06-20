@@ -4,7 +4,11 @@ import {
   internalServerErrorResponse,
   notFoundResponse,
 } from "../../../errors/index.js";
-import { conversationParamsSchema, conversationsSchema } from "../schemas.js";
+import { createJsonOpenApiResponse } from "../../../responses.js";
+import {
+  conversationParamsSchema,
+  conversationResponseSchema,
+} from "../schemas.js";
 
 export const getConversationOpenApiRoute = createRoute({
   method: "get",
@@ -13,14 +17,10 @@ export const getConversationOpenApiRoute = createRoute({
     params: conversationParamsSchema,
   },
   responses: {
-    200: {
+    200: createJsonOpenApiResponse({
       description: "Responded with requested conversation",
-      content: {
-        "application/json": {
-          schema: conversationsSchema,
-        },
-      },
-    },
+      schema: conversationResponseSchema,
+    }),
     400: badRequestResponse,
     404: notFoundResponse,
     500: internalServerErrorResponse,
