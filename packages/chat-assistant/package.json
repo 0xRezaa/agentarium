@@ -15,7 +15,7 @@
   "scripts": {
     "build": "npm run build:web && npm run build:server",
     "build:web": "cd web && vite build",
-    "build:server": "tsc -p server/tsconfig.json",
+    "build:server": "tsc -p server/tsconfig.build.json",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres pgadmin",
     "db:up": "docker compose up -d",
@@ -27,6 +27,8 @@
     "preview:web": "cd web && vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "npm run start:server",
     "start:server": "node server/dist/index.js",
     "typecheck": "tsc -p web/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
