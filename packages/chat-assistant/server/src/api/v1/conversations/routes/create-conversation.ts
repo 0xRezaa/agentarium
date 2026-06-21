@@ -35,6 +35,8 @@ export const createConversationOpenApiRoute = createRoute({
 
 export const createConversationHandler: RouteHandler<
   typeof createConversationOpenApiRoute
-> = () => {
+  // eslint-disable-next-line
+> = async (c) => {
+  const { userMessage: _, generationOptions: __ } = c.req.valid("json");
   throw new Error("Not implemented");
 };
