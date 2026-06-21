@@ -15,7 +15,7 @@ export interface GenerationOptions {
    * @see Ollama chat API: https://docs.ollama.com/api/chat
    * @see WebLLM model loading: https://webllm.mlc.ai/docs/user/basic_usage.html
    */
-  model?: string;
+  readonly model: string;
 
   /**
    * Controls randomness in the output.
@@ -27,7 +27,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  temperature?: number;
+  readonly temperature: number;
 
   /**
    * The maximum number of tokens that can be generated in the chat completion.
@@ -37,7 +37,7 @@ export interface GenerationOptions {
    * @see Ollama num_predict parameter: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  maxTokens?: number;
+  readonly maxTokens: number;
 
   /**
    * An alternative to sampling with temperature, called nucleus sampling.
@@ -49,7 +49,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  topP?: number;
+  readonly topP: number;
 
   /**
    * Limits the next-token selection pool to the top K most probable tokens.
@@ -62,7 +62,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  topK?: number;
+  readonly topK: number;
 
   /**
    * Up to 4 sequences where the API will stop generating further tokens.
@@ -73,7 +73,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  stop?: string | string[];
+  readonly stop: string | string[];
 
   /**
    * If set to true, partial message deltas will be sent as Server-Sent Events (SSE)
@@ -84,7 +84,7 @@ export interface GenerationOptions {
    * @see Ollama streaming: https://docs.ollama.com/api/streaming
    * @see WebLLM streaming chat completion: https://webllm.mlc.ai/docs/user/basic_usage.html#streaming-chat-completion
    */
-  stream?: boolean;
+  readonly stream: boolean;
 
   /**
    * Positive values penalize new tokens based on whether they appear in the text so far.
@@ -96,7 +96,7 @@ export interface GenerationOptions {
    * @see OpenAI Chat Completions API: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  presencePenalty?: number;
+  readonly presencePenalty: number;
 
   /**
    * Positive values penalize new tokens based on their existing frequency in the text so far.
@@ -108,5 +108,5 @@ export interface GenerationOptions {
    * @see OpenAI Chat Completions API: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  frequencyPenalty?: number;
+  readonly frequencyPenalty: number;
 }
