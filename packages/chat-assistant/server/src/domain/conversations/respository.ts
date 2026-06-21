@@ -1,7 +1,8 @@
 import type { Kysely } from "kysely";
 import type { DB } from "../../db/kysely-generated.js";
+import type { ConversationReader } from "./types.js";
 
-export class ConversationRepository {
+export class ConversationRepository implements ConversationReader {
   private readonly db: Kysely<DB>;
   constructor(db: Kysely<DB>) {
     this.db = db;
@@ -10,7 +11,7 @@ export class ConversationRepository {
     return this.db
       .selectFrom("conversations")
       .selectAll()
-      .where("id", "==", id)
+      .where("id", "=", id)
       .executeTakeFirst();
   }
 }

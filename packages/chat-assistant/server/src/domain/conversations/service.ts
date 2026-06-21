@@ -1,8 +1,8 @@
-import type { ConversationRepository } from "./respository.js";
+import type { ConversationReader } from "./types.js";
 
 export class ConversationService {
-  private readonly repo: ConversationRepository;
-  constructor(repo: ConversationRepository) {
+  private readonly repo: ConversationReader;
+  constructor(repo: ConversationReader) {
     this.repo = repo;
   }
   getConversation(id: string) {
