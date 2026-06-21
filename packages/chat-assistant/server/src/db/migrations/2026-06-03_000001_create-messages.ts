@@ -1,4 +1,9 @@
 import { sql, type Kysely } from "kysely";
+import {
+  messageRoleValues,
+  messageStatusValues,
+} from "../../domain/messages/constants.js";
+import { createConstraintCheckExpression } from "../utils.js";
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
@@ -11,7 +16,16 @@ export async function up(db: Kysely<unknown>): Promise<void> {
       col.notNull().defaultTo(sql`now()`),
     )
     .addColumn("role", "text", (col) => col.notNull())
+    .addCheckConstraint(
+      "message_role_check",
+      createConstraintCheckExpression("role", messageRoleValues),
+    )
     .addColumn("content", "jsonb", (col) => col.notNull())
+    .addColumn("status", "text", (col) => col.notNull())
+    .addCheckConstraint(
+      "message_status_check",
+      createConstraintCheckExpression("status", messageStatusValues),
+    )
     .execute();
 
   await db.schema
