@@ -1,7 +1,8 @@
 import type { Selectable } from "kysely";
 import type { Messages as DbMessage } from "../../../db/kysely-generated.js";
-import { messageRoleSchema, type MessageDto } from "./schemas.js";
+import type { MessageDto } from "./schemas.js";
 import z from "zod";
+import { messageRoleSchema } from "../../../domain/messages/schemas.js";
 
 export function toMessageDto(message: Selectable<DbMessage>): MessageDto {
   return {
