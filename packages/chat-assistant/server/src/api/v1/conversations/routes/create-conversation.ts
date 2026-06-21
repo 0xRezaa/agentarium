@@ -4,11 +4,23 @@ import {
   internalServerErrorResponse,
 } from "../../../errors/index.js";
 import { createJsonOpenApiResponse } from "../../../responses.js";
-import { conversationResponseSchema } from "../schemas.js";
+import {
+  conversationResponseSchema,
+  createConversationBodySchema,
+} from "../schemas.js";
 
 export const createConversationOpenApiRoute = createRoute({
   method: "post",
   path: "/",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: createConversationBodySchema,
+        },
+      },
+    },
+  },
   responses: {
     201: createJsonOpenApiResponse({
       description: "Created conversation.",

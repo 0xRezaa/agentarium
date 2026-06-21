@@ -8,7 +8,7 @@ import {
 } from "../../../errors/index.js";
 import { createJsonOpenApiResponse } from "../../../responses.js";
 import {
-  conversationParamsSchema,
+  getConversationParamsSchema,
   conversationResponseSchema,
 } from "../schemas.js";
 import { toConversationDto } from "../mappers.js";
@@ -18,7 +18,7 @@ export const getConversationOpenApiRoute = createRoute({
   method: "get",
   path: "/{conversationId}",
   request: {
-    params: conversationParamsSchema,
+    params: getConversationParamsSchema,
   },
   responses: {
     200: createJsonOpenApiResponse({
