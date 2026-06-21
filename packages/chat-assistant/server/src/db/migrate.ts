@@ -1,26 +1,9 @@
-import {
-  Migrator,
-  FileMigrationProvider,
-  type MigrationResultSet,
-} from "kysely/migration";
+import type { MigrationResultSet } from "kysely/migration";
 import { db } from "./database.js";
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import z from "zod";
+import { createMigrator } from "./migrator.js";
 
-const currentFilePath = fileURLToPath(import.meta.url);
-const currentDirPath = path.dirname(currentFilePath);
-const migrationFolder = path.join(currentDirPath, "migrations");
-
-const migrator = new Migrator({
-  db,
-  provider: new FileMigrationProvider({
-    fs,
-    path,
-    migrationFolder,
-  }),
-});
+const migrator = createMigrator(db);
 
 const migrateArgsSchema = z.union([z.literal("latest"), z.literal("down")]);
 async function migrate(
