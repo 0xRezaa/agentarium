@@ -4,6 +4,7 @@ export type * from "./messages/types.js";
 export type * from "./content/types.js";
 export type * from "./finish/types.js";
 export type * from "./usage/types.js";
+export type * from "./request/types.js";
 export * from "./id.js";
 export * from "./utils.js";
 export * from "./events/utils.js";
