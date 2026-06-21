@@ -1,6 +1,6 @@
-import type { ConversationReader } from "./types.js";
+import type { ConversationReader, GetConversationService } from "./types.js";
 
-export class ConversationService {
+export class ConversationService implements GetConversationService {
   private readonly repo: ConversationReader;
   constructor(repo: ConversationReader) {
     this.repo = repo;

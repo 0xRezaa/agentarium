@@ -6,3 +6,7 @@ export type Conversation = Selectable<Conversations>;
 export interface ConversationReader {
   findById(id: string): Promise<Conversation | undefined>;
 }
+
+export interface GetConversationService {
+  getConversation(id: string): Promise<Conversation | undefined>;
+}
