@@ -37,7 +37,7 @@ export interface GenerationOptions {
    * @see Ollama num_predict parameter: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  max_tokens?: number;
+  maxTokens?: number;
 
   /**
    * An alternative to sampling with temperature, called nucleus sampling.
@@ -49,7 +49,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  top_p?: number;
+  topP?: number;
 
   /**
    * Limits the next-token selection pool to the top K most probable tokens.
@@ -62,7 +62,7 @@ export interface GenerationOptions {
    * @see Ollama generation parameters: https://docs.ollama.com/modelfile#valid-parameters-and-values
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  top_k?: number;
+  topK?: number;
 
   /**
    * Up to 4 sequences where the API will stop generating further tokens.
@@ -96,7 +96,7 @@ export interface GenerationOptions {
    * @see OpenAI Chat Completions API: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  presence_penalty?: number;
+  presencePenalty?: number;
 
   /**
    * Positive values penalize new tokens based on their existing frequency in the text so far.
@@ -108,5 +108,5 @@ export interface GenerationOptions {
    * @see OpenAI Chat Completions API: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
    * @see WebLLM GenerationConfig: https://webllm.mlc.ai/docs/user/api_reference.html#generationconfig
    */
-  frequency_penalty?: number;
+  frequencyPenalty?: number;
 }
