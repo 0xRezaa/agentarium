@@ -1,9 +1,22 @@
 import { sql, type Kysely } from "kysely";
-import {
+import type {
   messageRoleValues,
   messageStatusValues,
 } from "../../domain/messages/constants.js";
 import { createConstraintCheckExpression } from "../utils.js";
+
+const messageRole: typeof messageRoleValues = [
+  "user",
+  "assistant",
+  "system",
+] as const;
+const messageStatus: typeof messageStatusValues = [
+  "pending",
+  "streaming",
+  "completed",
+  "failed",
+  "cancelled",
+] as const;
 
 export async function up(db: Kysely<unknown>): Promise<void> {
   await db.schema
@@ -18,13 +31,13 @@ export async function up(db: Kysely<unknown>): Promise<void> {
     .addColumn("role", "text", (col) => col.notNull())
     .addCheckConstraint(
       "message_role_check",
-      createConstraintCheckExpression("role", messageRoleValues),
+      createConstraintCheckExpression("role", messageRole),
     )
     .addColumn("content", "jsonb", (col) => col.notNull())
     .addColumn("status", "text", (col) => col.notNull())
     .addCheckConstraint(
       "message_status_check",
-      createConstraintCheckExpression("status", messageStatusValues),
+      createConstraintCheckExpression("status", messageStatus),
     )
     .execute();
 
